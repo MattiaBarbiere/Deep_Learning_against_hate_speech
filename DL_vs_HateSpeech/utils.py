@@ -14,7 +14,7 @@ def find_text_and_label(image_name, df):
         tuple: A tuple containing the file, text and label of the image.
     """
     # Iterate over the files
-    for file in csv_files:
+    for file in csv_files.values():
         df = pd.read_csv(file)
         # Check if the first column matches the image name
         match = df[df.iloc[:, 0] == image_name]

@@ -1,7 +1,7 @@
 import torch.nn as nn
 from transformers import BertModel
 
-class TextEncoder(nn.Module):
+class ImageEncoder(nn.Module):
     def __init__(self, embed_dim=512):
         super().__init__()
         self.bert = BertModel.from_pretrained('bert-base-uncased')

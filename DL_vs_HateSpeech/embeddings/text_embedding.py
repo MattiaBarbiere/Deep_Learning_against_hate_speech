@@ -1,7 +1,7 @@
 import torch.nn as nn
 from torchvision.models import resnet50
 
-class ImageEncoder(nn.Module):
+class TextEncoder(nn.Module):
     def __init__(self, embed_dim=512):
         super().__init__()
         self.resnet = resnet50(pretrained=True)

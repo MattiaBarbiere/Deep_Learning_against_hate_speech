@@ -1,0 +1,2 @@
+from DL_vs_HateSpeech.embeddings.image_embedding import ImageEncoder
+from DL_vs_HateSpeech.embeddings.text_embedding import TextEncoder
