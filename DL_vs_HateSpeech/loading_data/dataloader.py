@@ -2,7 +2,7 @@ import os
 from torch.utils.data import Dataset
 import pandas as pd
 from torchvision.io import read_image
-from DL_vs_HateSpeech.dataloader.preprocessing import *
+from DL_vs_HateSpeech.loading_data.preprocessing import *
 from DL_vs_HateSpeech.env_constants import PATH_TO_IMAGES, PATH_TO_CSV_FILES
 
 class DataLoader(Dataset):

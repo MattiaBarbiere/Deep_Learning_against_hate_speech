@@ -15,7 +15,7 @@ def test_path_to_images(image_name):
     plt.show()
 
     # Find the text and label of the image
-    file, text, label = find_text_and_label(image_name, pd.read_csv(csv_files[0]))
+    file, text, label = find_text_and_label(image_name)
     print(f"Text: {text}")
     print(f"Label: {label}")
 
@@ -23,7 +23,7 @@ def test_path_to_images(image_name):
 
 if __name__ == "__main__":
     # Check that all the paths to the CSV files exist
-    for file in csv_files:
+    for file in PATH_TO_CSV_FILES.values():
         if not os.path.exists(file):
             raise FileNotFoundError(f"CSV file {file} does not exist. Please check the path.")
     
