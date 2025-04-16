@@ -1,5 +1,7 @@
 import os
 from torch.utils.data import Dataset
+from DL_vs_HateSpeech.loading_data.preprocessing import NormalizePixels
+from torchvision import transforms
 import pandas as pd
 from torchvision.io import read_image
 from DL_vs_HateSpeech.loading_data.preprocessing import *
@@ -32,7 +34,10 @@ class DataLoader(Dataset):
         image_path = os.path.join(self.path_to_image, image_name)
         image = read_image(image_path)
 
-        # Preprocess the image
-        # image = preprocess_image(image)
+        # # Preprocess the image
+        # trans = transforms.Compose([
+        #     NormalizePixels(),
+        # ])
+        # image = trans(image)
 
         return image, text, label
