@@ -1,6 +1,6 @@
 import torch.nn as nn
 from DL_vs_HateSpeech.CLIP import FineTunedCLIP
-from DL_vs_HateSpeech.transformers.transformer import TransformerClassifier
+from DL_vs_HateSpeech.transformer_models.transformer import TransformerClassifier
 
 class ModelV0(nn.Module):
     def __init__(self, clip_model_type="32", hidden_dim=256, dropout=0.1):
