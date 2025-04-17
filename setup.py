@@ -4,7 +4,7 @@ with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 setup(
-    name='dlhs',       # Replace with your package name 
+    name='DL_vs_HateSpeech',       # Replace with your package name 
     version='0.1',                  # Package version
     authors='',             # Author name
     author_email='',  # Author email
