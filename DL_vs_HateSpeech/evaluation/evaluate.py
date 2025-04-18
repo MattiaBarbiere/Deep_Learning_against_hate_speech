@@ -1,8 +1,9 @@
 import torch
 from tqdm import tqdm
 
-def evaluate(model, dataloader, device):
+def evaluate(model, dataloader, criterion, device):
     model.eval()
+    total_loss = 0.0
     correct = 0
     total = 0
 
@@ -12,10 +13,19 @@ def evaluate(model, dataloader, device):
 
             # Forward pass
             probs = model(texts, images)
+
+            # Compute loss
+            loss = criterion(probs, labels)
+            total_loss += loss.item()
+
+            # Compute predictions
             preds = (probs > 0.5).int()
 
             # Calculate accuracy
             correct += (preds == labels).sum().item()
             total += labels.size(0)
 
-    return correct / total
+    avg_loss = total_loss / len(dataloader)
+    accuracy = correct / total
+
+    return avg_loss, accuracy
