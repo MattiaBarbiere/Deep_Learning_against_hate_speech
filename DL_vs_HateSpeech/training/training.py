@@ -19,7 +19,7 @@ def get_optimizer_and_criterion(model, lr=1e-5):
     """
     Returns an AdamW optimizer and a binary cross-entropy loss function.
     """
-    optimizer = AdamW(model.parameters(), lr=lr)
+    optimizer = AdamW(model.parameters(), lr=lr, weight_decay=0.01)
     criterion = nn.BCEWithLogitsLoss()
     return optimizer, criterion
 
