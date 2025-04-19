@@ -7,7 +7,6 @@ class TransformerClassifier(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.fc1 = nn.Linear(embedding_dim, hidden_dim)
         self.fc2 = nn.Linear(hidden_dim, 1)  # Binary classification --> 1 output
-        self.sigmoid = nn.Sigmoid()  # Output probability
 
     def forward(self, token_embeddings, attention_mask=None):
         """
@@ -29,5 +28,5 @@ class TransformerClassifier(nn.Module):
         x = F.relu(self.fc1(x))
         x = self.dropout(x)
         x = self.fc2(x)
-        return self.sigmoid(x).squeeze(-1)
+        return x.squeeze(-1)
     
