@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 from torch.optim import AdamW
 from tqdm import tqdm
+from DL_vs_HateSpeech.models.augmentation import augment_batch
+
 
 def collate_fn(batch):
     """
@@ -32,6 +34,7 @@ def train_epoch(model, dataloader, optimizer, criterion, device):
 
         # Forward pass
         optimizer.zero_grad()
+        # texts, images = augment_batch(texts, images)    # Code for augmentation
         probs = model(texts, images)
         loss = criterion(probs, labels)
 
