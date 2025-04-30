@@ -1,5 +1,43 @@
-from DL_vs_HateSpeech.env_constants import PATH_TO_CSV_FILES
+from DL_vs_HateSpeech.env_constants import PATH_TO_JSON_FILES
 import pandas as pd
+import json
+
+# Dict that assigns each label to a number
+LABEL_TO_NUM = {
+    "not harmful": 0,
+    "somewhat harmful": 1,
+    "very harmful": 2
+}
+
+def get_label_num(label):
+    """
+    Convert a label to its corresponding numerical value.
+
+    Args:
+        label (str): The label to convert.
+
+    Returns:
+        int: The numerical value of the label.
+    """
+    if label in LABEL_TO_NUM:
+        return LABEL_TO_NUM[label]
+    else:
+        raise ValueError(f"Label {label} not found in LABEL_TO_NUM dictionary.")
+    
+def get_label_str(label_num):
+    """
+    Convert a numerical label to its corresponding string value.
+
+    Args:
+        label_num (int): The numerical label to convert.
+
+    Returns:
+        str: The string value of the label.
+    """
+    for key, value in LABEL_TO_NUM.items():
+        if value == label_num:
+            return key
+    raise ValueError(f"Label number {label_num} not found in LABEL_TO_NUM dictionary.")
 
 # A function that given an image name, find the text and label of that image
 def find_text_and_label(image_name):
@@ -13,7 +51,7 @@ def find_text_and_label(image_name):
         tuple: A tuple containing the file, text and label of the image.
     """
     # Iterate over the files
-    for file in PATH_TO_CSV_FILES.values():
+    for file in PATH_TO_JSON_FILES.values():
         df = pd.read_csv(file)
         # Check if the first column matches the image name
         match = df[df.iloc[:, 0] == image_name]
@@ -25,3 +63,17 @@ def find_text_and_label(image_name):
     
     # If no match is found, return error
     raise ValueError(f"Image name {image_name} not found in any CSV file.")
+
+def load_json(path):
+    """
+    Load a JSON file and return its content.
+
+    Args:
+        path (str): The path to the JSON file.
+
+    Returns:
+        dict: The content of the JSON file.
+    """
+    with open(path, 'r') as f:
+        data = [json.loads(line) for line in f]
+    return pd.DataFrame(data)

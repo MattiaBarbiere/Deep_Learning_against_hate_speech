@@ -15,11 +15,10 @@ def test_dataloader():
     print(f"Text: {text}")
     print(f"Label: {label}")
     
-    plt.imshow(image.permute(1, 2, 0))
+    plt.imshow(image)
     plt.axis('off')  # Hide the axes
     plt.show()
     
-
 
 if __name__ == "__main__":
     test_dataloader()

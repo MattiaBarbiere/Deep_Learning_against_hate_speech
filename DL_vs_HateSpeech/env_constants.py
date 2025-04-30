@@ -6,11 +6,11 @@ load_dotenv()
 
 # Constants for the environment variables
 PATH_TO_IMAGES = os.getenv("PATH_TO_IMAGES")
-PATH_TO_TEXT = os.getenv("PATH_TO_TEXT")
+PATH_TO_METADATA = os.getenv("PATH_TO_METADATA")
 
-# Constants for the CSV files
-PATH_TO_CSV_FILES = {
-    "test": os.path.join(PATH_TO_TEXT, "Testing_meme_dataset.csv"),
-    "train": os.path.join(PATH_TO_TEXT, "Training_meme_dataset.csv"),
-    "val": os.path.join(PATH_TO_TEXT, "Validation_meme_dataset.csv"),
+# Constants for the JSON files
+PATH_TO_JSON_FILES = {
+    "test": os.path.join(PATH_TO_METADATA, "test_v1.jsonl"),
+    "train": os.path.join(PATH_TO_METADATA, "train_v1.jsonl"),
+    "val": os.path.join(PATH_TO_METADATA, "val_v1.jsonl"),
 }

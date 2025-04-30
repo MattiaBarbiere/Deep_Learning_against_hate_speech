@@ -3,7 +3,9 @@ import pandas as pd
 from PIL import Image
 import torch
 from torch.utils.data import Dataset
-from DL_vs_HateSpeech.env_constants import PATH_TO_IMAGES, PATH_TO_CSV_FILES
+from DL_vs_HateSpeech.env_constants import PATH_TO_IMAGES, PATH_TO_JSON_FILES
+from DL_vs_HateSpeech.utils import load_json, get_label_num
+
     
 class DataLoader(Dataset):
     def __init__(self, type = "train"):
@@ -14,8 +16,8 @@ class DataLoader(Dataset):
 
         """
         self.path_to_image = PATH_TO_IMAGES
-        self.path_to_csv = PATH_TO_CSV_FILES[type]
-        self.csv = pd.read_csv(self.path_to_csv)
+        self.path_to_json = PATH_TO_JSON_FILES[type]
+        self.json = load_json(self.path_to_json)
 
 
     def _ensure_rgb(self, img):
@@ -29,18 +31,18 @@ class DataLoader(Dataset):
         return img # Already RGB
 
     def __len__(self):
-        return len(self.csv)
+        return len(self.json)
 
     def __getitem__(self, idx):
         """
         Returns the image and its corresponding label.
         """
-        image_name = self.csv.iloc[idx, 0]
-        text = self.csv.iloc[idx, 1]
-        label_raw = self.csv.iloc[idx, 2]
+        image_name = self.json.iloc[idx, 1]
+        text = self.json.iloc[idx, 3]
+        label_raw = self.json.iloc[idx, 2][0]
 
-        # Convert labels to binary tensor
-        label = 1 if label_raw.lower() == "offensive" else 0
+        # Convert labels to numerical values
+        label = get_label_num(label_raw)
         label = torch.tensor(label, dtype=torch.float32)
 
         # Load the image and convert to RGB
