@@ -1,0 +1,11 @@
+#!/bin/bash -l
+#SBATCH --gres=gpu:1
+#SBATCH --qos=normal
+#SBATCH --account=master
+#SBATCH --time=00:05:00
+
+module purge
+module load gcc cuda
+
+# python -c "import DL_vs_HateSpeech; print('version:', DL_vs_HateSpeech)"
+python DL_vs_HateSpeech/results_script.py

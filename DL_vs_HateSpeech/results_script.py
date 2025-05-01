@@ -17,6 +17,7 @@ from DL_vs_HateSpeech.plots.plot_loss import plot_losses
 
 # Device setup
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
 
 # Hyperparameters
 BATCH_SIZE = 16
@@ -51,6 +52,13 @@ for epoch in range(EPOCHS):
     print(f"Val Loss: {val_loss:.4f}")
     print(f"Val Accuracy: {val_accuracy * 100:.2f}%")
     val_losses.append(val_loss)
+
+
+model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_0/"
+os.makedirs(os.path.dirname(model_save_path), exist_ok=True)
+torch.save(model.state_dict(), model_save_path + "model.pt")
+torch.save(val_losses, model_save_path + "val_loss.pt")
+torch.save(train_losses, model_save_path + "train_loss.pt")
 
 # Plot at the end
 # plot_losses(train_losses, val_losses, save_path="loss_plot.png")

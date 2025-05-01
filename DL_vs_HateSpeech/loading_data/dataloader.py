@@ -42,6 +42,8 @@ class DataLoader(Dataset):
         label_raw = self.json.iloc[idx, 2][0]
 
         # Convert labels to numerical values
+        if len(label_raw) == 0:
+            raise ValueError(f"Label is empty for image {image_name}")
         label = get_label_num(label_raw)
         label = torch.tensor(label, dtype=torch.float32)
 

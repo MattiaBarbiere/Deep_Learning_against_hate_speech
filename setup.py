@@ -5,13 +5,19 @@ with open("requirements.txt") as f:
 
 setup(
     name='DL_vs_HateSpeech',       # Replace with your package name 
-    version='0.1',                  # Package version
-    authors='',             # Author name
-    author_email='',  # Author email
+    version='0.1',                 # Package version
+    author='Group 19',            # Author name
+    author_email='your_email@example.com',  # Author email
     description='Deep learning project against hate speech',  # Short description
-    long_description='TBD',  # Full description
+    long_description="TBD",  # Full description loaded from README.md
     long_description_content_type='text/markdown',  # Description content type
     url='https://github.com/MattiaBarbiere/Deep_Learning_against_hate_speech',  # URL to your package repository
-    packages=find_packages(),       # Automatically find all packages in the directory
-    install_requires=requirements,
+    packages=find_packages(),      # Automatically find all packages in the directory
+    install_requires=[], # Dependencies from requirements.txt
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
+    python_requires='>=3.6',       # Minimum Python version
 )
