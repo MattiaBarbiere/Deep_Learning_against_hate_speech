@@ -18,8 +18,8 @@ def evaluate(model, dataloader, criterion, device):
             loss = criterion(probs, labels)
             total_loss += loss.item()
 
-            # Compute predictions
-            preds = (probs > 0.5).int()
+            # Compute predictions (get the class with the highest probability)
+            preds = torch.argmax(probs, dim=1)
 
             # Calculate accuracy
             correct += (preds == labels).sum().item()

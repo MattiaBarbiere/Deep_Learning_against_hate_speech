@@ -14,6 +14,7 @@ from DL_vs_HateSpeech.training.training import (
 )
 from DL_vs_HateSpeech.evaluation.evaluate import evaluate
 from DL_vs_HateSpeech.plots.plot_loss import plot_losses
+from DL_vs_HateSpeech.utils import check_frozen_params
 
 # Device setup
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -22,7 +23,7 @@ print(f"Using device: {device}")
 # Hyperparameters
 BATCH_SIZE = 16
 LR = 1e-5
-EPOCHS = 2
+EPOCHS = 20
 
 # Load Data
 train_dataset = DataLoader(type="train")
@@ -38,6 +39,9 @@ optimizer, criterion = get_optimizer_and_criterion(model, lr=LR)
 # Training and evaluation loop
 train_losses = []
 val_losses = []
+
+# Check how many parameters are frozen
+check_frozen_params(model, print_layers=False)
 
 for epoch in range(EPOCHS):
     print(f"\nEpoch {epoch + 1}/{EPOCHS}")
@@ -55,10 +59,10 @@ for epoch in range(EPOCHS):
 
 
 model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_0/"
-os.makedirs(os.path.dirname(model_save_path), exist_ok=True)
-torch.save(model.state_dict(), model_save_path + "model.pt")
+model.save(model_save_path)
 torch.save(val_losses, model_save_path + "val_loss.pt")
 torch.save(train_losses, model_save_path + "train_loss.pt")
+
 
 # Plot at the end
 # plot_losses(train_losses, val_losses, save_path="loss_plot.png")

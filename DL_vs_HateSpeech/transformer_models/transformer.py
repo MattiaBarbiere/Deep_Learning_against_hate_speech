@@ -2,12 +2,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class TransformerClassifier(nn.Module):
-    def __init__(self, embedding_dim, hidden_dim=128, dropout=0.3):
+    def __init__(self, embedding_dim, hidden_dim=128, dropout=0.3, output_dim=3):
         super().__init__()
         self.dropout = nn.Dropout(dropout)
         self.norm = nn.LayerNorm(embedding_dim)
         self.fc1 = nn.Linear(embedding_dim, hidden_dim)
-        self.fc2 = nn.Linear(hidden_dim, 1)  # Binary classification --> 1 output
+        self.fc2 = nn.Linear(hidden_dim, output_dim)
 
     def forward(self, token_embeddings, attention_mask=None):
         """

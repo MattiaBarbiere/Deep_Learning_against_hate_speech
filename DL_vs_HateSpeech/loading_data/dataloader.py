@@ -45,7 +45,7 @@ class DataLoader(Dataset):
         if len(label_raw) == 0:
             raise ValueError(f"Label is empty for image {image_name}")
         label = get_label_num(label_raw)
-        label = torch.tensor(label, dtype=torch.float32)
+        label = torch.tensor(label).long()
 
         # Load the image and convert to RGB
         image_path = os.path.join(self.path_to_image, image_name)

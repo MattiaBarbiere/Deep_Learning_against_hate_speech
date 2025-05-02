@@ -77,3 +77,23 @@ def load_json(path):
     with open(path, 'r') as f:
         data = [json.loads(line) for line in f]
     return pd.DataFrame(data)
+
+def check_frozen_params(model, print_layers=False):
+    """
+    Check which parameters of the model are frozen and which are trainable. If prints
+    the number of frozen and trainable parameters.
+
+    Args:
+        model (nn.Module): The model to check.
+        print_layers (bool): If True, print the names of the layers and their requires_grad status.
+
+    Returns:
+        None
+    """
+    frozen = sum(p.numel() for p in model.parameters() if not p.requires_grad)
+    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+    if print_layers:
+        for name, param in model.named_parameters():
+            print(f"{name}: requires_grad = {param.requires_grad}")
+    print(f"Trainable params: {trainable}, Frozen params: {frozen}")

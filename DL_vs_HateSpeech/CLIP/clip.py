@@ -24,6 +24,10 @@ class FineTunedCLIP(nn.Module):
         self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch" + model_type)
         self.config = self.pretrained_model.config
 
+        # Freeze the CLIP model parameters
+        for param in self.pretrained_model.parameters():
+            param.requires_grad = False
+
         # Ensure the hidden state is of the same dimension between text and image
         self.linear1 = nn.Linear(self.config.vision_config.hidden_size, self.config.text_config.hidden_size)
 

@@ -13,39 +13,45 @@ def collate_fn(batch):
     # Unzip list of tuples
     images, texts, labels = zip(*batch)
 
-    # Convert images to tensors
-    labels = torch.tensor(labels, dtype=torch.float32)
+    # Convert labels to tensors
+    labels = torch.tensor(labels, dtype=torch.long)
     return list(images), list(texts), labels
+
 
 def get_optimizer_and_criterion(model, lr=1e-5):
     """
-    Returns an AdamW optimizer and a binary cross-entropy loss function.
+    Returns an AdamW optimizer and a cross-entropy loss function.
     """
     optimizer = AdamW(model.parameters(), lr=lr, weight_decay=0.01)
-    criterion = nn.BCEWithLogitsLoss()
+    criterion = nn.CrossEntropyLoss()
     return optimizer, criterion
 
+
 def train_epoch(model, dataloader, optimizer, criterion, device):
+    """
+    Trains the model for one epoch.
+    """
     model.train()
     total_loss = 0.0
 
     for images, texts, labels in tqdm(dataloader, desc="Training"):
-        labels = labels.float().to(device)
+        # Move data to the specified device
+        labels = labels.to(device)
 
-        # Forward pass
+        # Model should handle preprocessing of texts and images
         optimizer.zero_grad()
 
-        # texts, images = augment_batch(texts, images)    # Code for augmentation
-
-        # Duplicate labels to match augmentation
-        # labels = torch.cat([labels, labels], dim=0)
-
+        # Model forward pass
         probs = model(texts, images)
+
+        # Compute loss
         loss = criterion(probs, labels)
 
         # Backward pass and optimization
         loss.backward()
         optimizer.step()
+
+        # Accumulate loss
         total_loss += loss.item()
 
     return total_loss / len(dataloader)
