@@ -8,6 +8,12 @@ from DL_vs_HateSpeech.transformer_models.transformer import TransformerClassifie
 class ModelV0(nn.Module, BaseModel):
     def __init__(self, clip_model_type="32", hidden_dim=256, dropout=0.1):
         super().__init__()
+        BaseModel.__init__(self)
+        # Save the args
+        self.clip_model_type = clip_model_type
+        self.hidden_dim = hidden_dim
+        self.dropout = dropout
+
         # Multimodal CLIP
         self.clip = FineTunedCLIP(model_type=clip_model_type)
         
@@ -73,9 +79,9 @@ class ModelV0(nn.Module, BaseModel):
         torch.save({
         "model_type": self.model_type,
         "model_args": {
-            "clip_model_type": self.clip.model_type,
-            "hidden_dim": self.classifier.hidden_dim,
-            "dropout": self.classifier.dropout
+            "clip_model_type": self.clip_model_type,
+            "hidden_dim": self.hidden_dim,
+            "dropout": self.dropout
         },
         "clip.linear1": self.clip.linear1.state_dict(),
         "classifier": self.classifier.state_dict()
