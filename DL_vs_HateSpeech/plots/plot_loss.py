@@ -1,4 +1,19 @@
 import matplotlib.pyplot as plt
+import torch
+import os
+
+def plot_losses_from_path(path, save_path=None):
+    """
+    Loads training and validation losses from specified path and plots them.
+
+    Args:
+        path (str): Path to the directory containing loss files.
+        save_path (str, optional): If provided, saves the plot to this path.
+    """
+    train_losses = torch.load(os.path.join(path, "train_loss.pt"))
+    val_losses = torch.load(os.path.join(path, "val_loss.pt"))
+    
+    plot_losses(train_losses, val_losses, save_path)
 
 def plot_losses(train_losses, val_losses, save_path=None):
     """

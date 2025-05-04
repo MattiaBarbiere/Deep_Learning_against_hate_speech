@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
 import os
+from DL_vs_HateSpeech.models.base_model import BaseModel
 from DL_vs_HateSpeech.CLIP import FineTunedCLIP
 from DL_vs_HateSpeech.transformer_models.transformer import TransformerClassifier
 
-class ModelV0(nn.Module):
+class ModelV0(nn.Module, BaseModel):
     def __init__(self, clip_model_type="32", hidden_dim=256, dropout=0.1):
         super().__init__()
         # Multimodal CLIP
@@ -20,6 +21,13 @@ class ModelV0(nn.Module):
 
         # Make sure the clip weights are frozen
         self.assert_frozen_params()
+
+    @property
+    def model_type(self):
+        """
+        Returns the model type.
+        """
+        return self.__class__.__name__
 
     def forward(self, text, images, attention_mask=None):
         """
@@ -70,29 +78,13 @@ class ModelV0(nn.Module):
 
         # Save the model state dictionary
         torch.save({
+        "model_type": self.model_type,
+        "model_args": {
+            "clip_model_type": self.clip.model_type,
+            "hidden_dim": self.classifier.hidden_dim,
+            "dropout": self.classifier.dropout
+        },
         "clip.linear1": self.clip.linear1.state_dict(),
         "classifier": self.classifier.state_dict()
-        }, path + "fine_tuned_params.pth")
-
-    def load(self, path):
-        """
-        Load the model state dictionary from the specified path.
-        
-        Args:
-            path (str): The path to load the model from.
-        """
-        checkpoint = torch.load(path + "fine_tuned_params.pth")
-        self.clip.linear1.load_state_dict(checkpoint["clip.linear1"])
-        self.classifier.load_state_dict(checkpoint["classifier"])
-
-        # Make sure the clip weights are frozen
-        self.assert_frozen_params()
-
-    def assert_frozen_params(self):
-        """
-        Assert that the model weights are frozen.
-        """
-        # All parameters from clip.pretrained_model should be frozen
-        for param in self.clip.pretrained_model.parameters():
-            assert not param.requires_grad, "CLIP model parameters should be frozen."
+        }, os.path.join(path, "model.pth"))
         
