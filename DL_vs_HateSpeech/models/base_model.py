@@ -11,13 +11,12 @@ class BaseModel(ABC):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
     @property
     def model_type(self):
         """
         Returns the model type.
         """
-        pass
+        return self.__class__.__name__
     
     @abstractmethod
     def forward(self, *args, **kwargs):

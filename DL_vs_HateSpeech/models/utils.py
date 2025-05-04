@@ -1,6 +1,8 @@
 import torch
 import os
+from DL_vs_HateSpeech.models import *
 
+MODEl_NAMES = {"ModelV0": ModelV0}
 
 def load(path):
     """
@@ -18,7 +20,7 @@ def load(path):
     model_type = checkpoint["model_type"]
 
     # Model class
-    model_class = eval(f"DL_vs_HateSpeech.models.{model_type}")
+    model_class = MODEl_NAMES[model_type]
 
     # Extract the model arguments
     model_args = checkpoint["model_args"]

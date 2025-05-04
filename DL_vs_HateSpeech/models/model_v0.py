@@ -22,13 +22,6 @@ class ModelV0(nn.Module, BaseModel):
         # Make sure the clip weights are frozen
         self.assert_frozen_params()
 
-    @property
-    def model_type(self):
-        """
-        Returns the model type.
-        """
-        return self.__class__.__name__
-
     def forward(self, text, images, attention_mask=None):
         """
         text: List[str] or tensor (batch_size,)
