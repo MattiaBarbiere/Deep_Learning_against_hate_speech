@@ -58,7 +58,7 @@ for epoch in range(EPOCHS):
     val_losses.append(val_loss)
 
 
-model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_0/"
+model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_0_with_augmentation/"
 model.save(model_save_path)
 torch.save(val_losses, model_save_path + "val_loss.pt")
 torch.save(train_losses, model_save_path + "train_loss.pt")

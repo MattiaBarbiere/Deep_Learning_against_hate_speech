@@ -27,7 +27,7 @@ def get_optimizer_and_criterion(model, lr=1e-5):
     return optimizer, criterion
 
 
-def train_epoch(model, dataloader, optimizer, criterion, device):
+def train_epoch(model, dataloader, optimizer, criterion, device, augmentation=True):
     """
     Trains the model for one epoch.
     """
@@ -40,6 +40,13 @@ def train_epoch(model, dataloader, optimizer, criterion, device):
 
         # Model should handle preprocessing of texts and images
         optimizer.zero_grad()
+
+        # Code for augmentation
+        if augmentation:
+            # Augment the batch
+            texts, images = augment_batch(texts, images)
+            # Duplicate labels to match augmentation
+            labels = torch.cat([labels, labels], dim=0)   
 
         # Model forward pass
         probs = model(texts, images)
