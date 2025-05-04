@@ -4,7 +4,7 @@ from DL_vs_HateSpeech.models import *
 
 MODEl_NAMES = {"ModelV0": ModelV0}
 
-def load_model_from_path(path):
+def load_model_from_path(path, device):
     """
     Load the model from the specified path.
 
@@ -14,7 +14,7 @@ def load_model_from_path(path):
     Returns:
         An instance of the model with loaded weights.
     """
-    checkpoint = torch.load(os.path.join(path, "model.pth"))
+    checkpoint = torch.load(os.path.join(path, "model.pth"), map_location=device)
 
     # Extract the saved model arguments
     model_type = checkpoint["model_type"]

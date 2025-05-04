@@ -24,6 +24,18 @@ def get_label_num(label):
     else:
         raise ValueError(f"Label {label} not found in LABEL_TO_NUM dictionary.")
     
+def get_label_num_list(label_list):
+    """
+    Convert a list of labels to their corresponding numerical values.
+
+    Args:
+        label_list (list): The list of labels to convert.
+
+    Returns:
+        list: A list of numerical values corresponding to the labels.
+    """
+    return [get_label_num(label) for label in label_list]
+    
 def get_label_str(label_num):
     """
     Convert a numerical label to its corresponding string value.
@@ -38,6 +50,18 @@ def get_label_str(label_num):
         if value == label_num:
             return key
     raise ValueError(f"Label number {label_num} not found in LABEL_TO_NUM dictionary.")
+
+def get_label_str_list(label_num_list):
+    """
+    Convert a list of numerical labels to their corresponding string values.
+
+    Args:
+        label_num_list (list): The list of numerical labels to convert.
+
+    Returns:
+        list: A list of string values corresponding to the numerical labels.
+    """
+    return [get_label_str(label_num) for label_num in label_num_list]
 
 # A function that given an image name, find the text and label of that image
 def find_text_and_label(image_name):
