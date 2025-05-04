@@ -4,7 +4,7 @@ from DL_vs_HateSpeech.models import *
 
 MODEl_NAMES = {"ModelV0": ModelV0}
 
-def load(path):
+def load_model_from_path(path):
     """
     Load the model from the specified path.
 
