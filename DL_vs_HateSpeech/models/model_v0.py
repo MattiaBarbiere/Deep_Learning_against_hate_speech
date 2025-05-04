@@ -7,7 +7,7 @@ from DL_vs_HateSpeech.transformer_models.transformer import TransformerClassifie
 
 class ModelV0(nn.Module, BaseModel):
     def __init__(self, clip_model_type="32", hidden_dim=256, dropout=0.1):
-        super().__init__()
+        nn.Module.__init__(self)
         BaseModel.__init__(self)
         # Save the args
         self.clip_model_type = clip_model_type
