@@ -88,6 +88,29 @@ def find_text_and_label(image_name):
     # If no match is found, return error
     raise ValueError(f"Image name {image_name} not found in any CSV file.")
 
+def find_text_and_label_jsonl(image_name):
+    """
+    Given an image name, find the text and labels of that image in the JSONL dataframes.
+
+    Args:
+        image_name (str): The name of the image.
+
+    Returns:
+        tuple: A tuple containing the file, text, and labels of the image.
+    """
+    for file in PATH_TO_JSON_FILES.values():
+        df = load_json(file)
+        # Check if the 'image' column matches the image name
+        match = df[df['image'] == image_name]
+        if not match.empty:
+            text = match.iloc[0]['text']
+            labels = match.iloc[0]['labels']
+            return file, text, labels
+
+    # If no match is found, raise an error
+    raise ValueError(f"Image name {image_name} not found in any JSONL file.")
+
+
 def load_json(path):
     """
     Load a JSON file and return its content.
