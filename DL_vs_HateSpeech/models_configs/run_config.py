@@ -1,6 +1,6 @@
 #hydra imports
 import hydra
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 import torch
 from torch.utils.data import DataLoader as TorchDataLoader
 import sys, os
@@ -19,12 +19,14 @@ from DL_vs_HateSpeech.utils import check_frozen_params
 sys.path.append(os.path.abspath(".."))
 
 
-@hydra.main(version_base=None, config_path="config_files", config_name="config_1.yaml")
+@hydra.main(version_base=None, config_path="config_files", config_name="model_v1_config.yaml")
 def main(cfg: DictConfig):
 
     # Device setup
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
+    cfg_dict = OmegaConf.to_container(cfg, resolve=True)
+    print(cfg_dict)
 
     # Hyperparameters
     BATCH_SIZE = cfg.train.batch_size
@@ -32,6 +34,7 @@ def main(cfg: DictConfig):
     EPOCHS = cfg.train.epochs
     AUGMENTATION = cfg.train.augmentation
     WEIGHT_DECAY = cfg.train.weight_decay
+    model_class = MODEL_NAMES[cfg.model.type]
     model_kwargs = cfg.model.model_kwargs
 
     # Load Data
@@ -42,7 +45,7 @@ def main(cfg: DictConfig):
     val_loader = TorchDataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=collate_fn)
 
     # Initialize Model, Optimizer, Loss
-    model = ModelV1(**model_kwargs).to(device)
+    model = model_class(**model_kwargs).to(device)
     optimizer, criterion = get_optimizer_and_criterion(model, lr=LR, weight_decay=WEIGHT_DECAY)
 
     # Training and evaluation loop

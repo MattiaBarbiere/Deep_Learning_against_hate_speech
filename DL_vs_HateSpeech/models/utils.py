@@ -2,7 +2,7 @@ import torch
 import os
 from DL_vs_HateSpeech.models import *
 
-MODEl_NAMES = {"ModelV0": ModelV0, "ModelV1": ModelV1, "ModelV2": ModelV2}
+MODEL_NAMES = {"ModelV0": ModelV0, "ModelV1": ModelV1, "ModelV2": ModelV2}
 
 def load_model_from_path(path, device):
     """
@@ -20,7 +20,7 @@ def load_model_from_path(path, device):
     model_type = checkpoint["model_type"]
 
     # Model class
-    model_class = MODEl_NAMES[model_type]
+    model_class = MODEL_NAMES[model_type]
 
     # Extract the model arguments
     model_args = checkpoint["model_args"]
