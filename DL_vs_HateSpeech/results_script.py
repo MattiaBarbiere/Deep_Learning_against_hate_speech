@@ -24,6 +24,7 @@ print(f"Using device: {device}")
 BATCH_SIZE = 16
 LR = 1e-5
 EPOCHS = 20
+AUGMENTATION = False
 
 # Load Data
 train_dataset = DataLoader(type="train")
@@ -47,7 +48,7 @@ for epoch in range(EPOCHS):
     print(f"\nEpoch {epoch + 1}/{EPOCHS}")
 
     # Train
-    train_loss = train_epoch(model, train_loader, optimizer, criterion, device)
+    train_loss = train_epoch(model, train_loader, optimizer, criterion, device, augmentation=AUGMENTATION)
     print(f"Train Loss: {train_loss:.4f}")
     train_losses.append(train_loss)
 
@@ -58,7 +59,7 @@ for epoch in range(EPOCHS):
     val_losses.append(val_loss)
 
 
-model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_0_with_augmentation/"
+model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_1/"
 model.save(model_save_path)
 torch.save(val_losses, model_save_path + "val_loss.pt")
 torch.save(train_losses, model_save_path + "train_loss.pt")
