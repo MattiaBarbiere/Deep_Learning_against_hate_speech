@@ -5,7 +5,7 @@ import sys, os
 sys.path.append(os.path.abspath(".."))
 
 
-from DL_vs_HateSpeech.models.model_v0 import ModelV0
+from DL_vs_HateSpeech.models import *
 from DL_vs_HateSpeech.loading_data.dataloader import DataLoader
 from DL_vs_HateSpeech.training.training import (
     collate_fn,
@@ -33,7 +33,7 @@ train_loader = TorchDataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=Tru
 val_loader = TorchDataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=collate_fn)
 
 # Initialize Model, Optimizer, Loss
-model = ModelV0(clip_model_type="32").to(device)
+model = ModelV1(clip_model_type="32").to(device)
 optimizer, criterion = get_optimizer_and_criterion(model, lr=LR)
 
 # Training and evaluation loop

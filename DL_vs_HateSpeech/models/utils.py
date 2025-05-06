@@ -2,7 +2,7 @@ import torch
 import os
 from DL_vs_HateSpeech.models import *
 
-MODEl_NAMES = {"ModelV0": ModelV0}
+MODEl_NAMES = {"ModelV0": ModelV0, "ModelV1": ModelV1}
 
 def load_model_from_path(path, device):
     """
