@@ -71,9 +71,9 @@ def main(cfg: DictConfig):
 
 
     # model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_1_with_augmentation/"
-    model.save("")
-    torch.save(val_losses, "val_loss.pt")
-    torch.save(train_losses, "train_loss.pt")
+    model.save()
+    torch.save(val_losses, "./val_loss.pt")
+    torch.save(train_losses, "./train_loss.pt")
 
 
     # Plot at the end

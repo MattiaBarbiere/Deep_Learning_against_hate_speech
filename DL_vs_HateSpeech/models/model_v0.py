@@ -62,18 +62,21 @@ class ModelV0(nn.Module, BaseModel):
         return torch.softmax(logits, dim=-1)
 
 
-    def save(self, path):
+    def save(self, path=None):
         """
         Save the model state dictionary to the specified path.
         
         Args:
-            path (str): The path to save the model.
+            path (str): The path to save the model. Default is None, which saves to the current directory.
         """
         # Make sure the clip weights are frozen
         self.assert_frozen_params()
 
         # Create the directory if it doesn't exist
-        os.makedirs(os.path.dirname(path), exist_ok=True)
+        if path is None:
+            path = os.path.join(os.getcwd())
+        else:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
 
         # Save the model state dictionary
         torch.save({
