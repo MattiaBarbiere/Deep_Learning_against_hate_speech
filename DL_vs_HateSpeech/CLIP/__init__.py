@@ -1,1 +1,2 @@
 from DL_vs_HateSpeech.CLIP.clip import FineTunedCLIP
+from DL_vs_HateSpeech.CLIP.attention_clip import AttentionCLIP

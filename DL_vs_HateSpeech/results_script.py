@@ -24,6 +24,7 @@ print(f"Using device: {device}")
 BATCH_SIZE = 16
 LR = 1e-5
 EPOCHS = 20
+WEIGHT_DECAY = 0.01
 AUGMENTATION = True
 
 # Load Data
@@ -35,7 +36,7 @@ val_loader = TorchDataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, 
 
 # Initialize Model, Optimizer, Loss
 model = ModelV1(clip_model_type="32").to(device)
-optimizer, criterion = get_optimizer_and_criterion(model, lr=LR)
+optimizer, criterion = get_optimizer_and_criterion(model, lr=LR, weight_decay=WEIGHT_DECAY)
 
 # Training and evaluation loop
 train_losses = []

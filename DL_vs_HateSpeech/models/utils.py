@@ -2,7 +2,7 @@ import torch
 import os
 from DL_vs_HateSpeech.models import *
 
-MODEl_NAMES = {"ModelV0": ModelV0, "ModelV1": ModelV1}
+MODEl_NAMES = {"ModelV0": ModelV0, "ModelV1": ModelV1, "ModelV2": ModelV2}
 
 def load_model_from_path(path, device):
     """
@@ -32,6 +32,12 @@ def load_model_from_path(path, device):
     model.clip.linear1.load_state_dict(checkpoint["clip.linear1"])
     model.classifier.load_state_dict(checkpoint["classifier"])
 
+    # Load attention weights if available
+    if "attention_weights" in checkpoint:
+        attention_weights = checkpoint["attention_weights"]
+        model.clip.set_attention_weights(attention_weights["clip_text"], attention_weights["clip_image"])
+        model.classifier.set_attention_weights(attention_weights["classifier"])
+    
     # Put the model in evaluation mode
     model.eval()
 
