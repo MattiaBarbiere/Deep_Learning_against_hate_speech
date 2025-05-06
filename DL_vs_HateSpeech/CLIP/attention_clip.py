@@ -21,7 +21,7 @@ class AttentionCLIP(nn.Module):
 
         # Load the CLIP model and processor
         self.pretrained_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch" + model_type, output_hidden_states=True)
-        self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch" + model_type)
+        self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch" + model_type, use_fast=False)
         self.config = self.pretrained_model.config
 
         # Freeze the CLIP model parameters
