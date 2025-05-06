@@ -24,7 +24,7 @@ print(f"Using device: {device}")
 BATCH_SIZE = 16
 LR = 1e-5
 EPOCHS = 20
-AUGMENTATION = False
+AUGMENTATION = True
 
 # Load Data
 train_dataset = DataLoader(type="train")
@@ -59,7 +59,7 @@ for epoch in range(EPOCHS):
     val_losses.append(val_loss)
 
 
-model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_1/"
+model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_1_with_augmentation/"
 model.save(model_save_path)
 torch.save(val_losses, model_save_path + "val_loss.pt")
 torch.save(train_losses, model_save_path + "train_loss.pt")
