@@ -55,9 +55,9 @@ class DataLoader(Dataset):
         Returns the image and its corresponding label.
         """
         row = self.json.iloc[idx]
-        image_name = row[1]
-        text = row[3]
-        label_raw = row[2][0]
+        image_name = row.iloc[1]
+        text = row.iloc[3]
+        label_raw = row.iloc[2][0]
 
         if len(label_raw) == 0:
             raise ValueError(f"Label is empty for image {image_name}")
