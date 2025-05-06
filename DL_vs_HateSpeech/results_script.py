@@ -28,14 +28,14 @@ WEIGHT_DECAY = 0.01
 AUGMENTATION = True
 
 # Load Data
-train_dataset = DataLoader(type="train")
-val_dataset = DataLoader(type="val")
+train_dataset = DataLoader(type="train", subset="both")
+val_dataset = DataLoader(type="val", subset="both")
 
 train_loader = TorchDataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_fn)
 val_loader = TorchDataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=collate_fn)
 
 # Initialize Model, Optimizer, Loss
-model = ModelV1(clip_model_type="32").to(device)
+model = ModelV0(clip_model_type="32").to(device)
 optimizer, criterion = get_optimizer_and_criterion(model, lr=LR, weight_decay=WEIGHT_DECAY)
 
 # Training and evaluation loop
