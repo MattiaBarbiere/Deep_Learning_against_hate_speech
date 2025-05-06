@@ -178,4 +178,7 @@ data
 images
 splits
 HarMeme_Images
+
+# Cluster files
 *slurm*
+.submitit

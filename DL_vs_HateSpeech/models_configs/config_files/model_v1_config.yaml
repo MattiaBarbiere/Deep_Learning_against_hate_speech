@@ -4,20 +4,20 @@ defaults:
 
 hydra:
   run:
-    dir: ../models/model_checkpoints
+    dir: ./DL_vs_HateSpeech/models/model_checkpoints
   sweep:
-    dir: ../models/model_checkpoints
+    dir: ./DL_vs_HateSpeech/models/model_checkpoints
     subdir: ${model.type}_clip_${model.model_kwargs.clip_model_type}_aug_${train.augmentation}
   sweeper:
     params:
-      train.batch_size: 16, 32
+      model.model_kwargs.clip_model_type: "16, 32"
   
   job:
     chdir: True
 
   launcher:
     # submitit_folder: ${hydra.sweep.dir}/.submitit/%j
-    timeout_min: 2880
+    timeout_min: 10
     cpus_per_task: null
     gpus_per_node: null
     tasks_per_node: 1
