@@ -5,7 +5,7 @@ import sys, os
 sys.path.append(os.path.abspath(".."))
 
 
-from DL_vs_HateSpeech.models.model_v0 import ModelV0
+from DL_vs_HateSpeech.models import *
 from DL_vs_HateSpeech.loading_data.dataloader import DataLoader
 from DL_vs_HateSpeech.training.training import (
     collate_fn,
@@ -24,6 +24,8 @@ print(f"Using device: {device}")
 BATCH_SIZE = 16
 LR = 1e-5
 EPOCHS = 20
+WEIGHT_DECAY = 0.01
+AUGMENTATION = True
 
 # Load Data
 train_dataset = DataLoader(type="train")
@@ -33,8 +35,8 @@ train_loader = TorchDataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=Tru
 val_loader = TorchDataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=collate_fn)
 
 # Initialize Model, Optimizer, Loss
-model = ModelV0(clip_model_type="32").to(device)
-optimizer, criterion = get_optimizer_and_criterion(model, lr=LR)
+model = ModelV1(clip_model_type="32").to(device)
+optimizer, criterion = get_optimizer_and_criterion(model, lr=LR, weight_decay=WEIGHT_DECAY)
 
 # Training and evaluation loop
 train_losses = []
@@ -47,7 +49,7 @@ for epoch in range(EPOCHS):
     print(f"\nEpoch {epoch + 1}/{EPOCHS}")
 
     # Train
-    train_loss = train_epoch(model, train_loader, optimizer, criterion, device)
+    train_loss = train_epoch(model, train_loader, optimizer, criterion, device, augmentation=AUGMENTATION)
     print(f"Train Loss: {train_loss:.4f}")
     train_losses.append(train_loss)
 
@@ -58,7 +60,7 @@ for epoch in range(EPOCHS):
     val_losses.append(val_loss)
 
 
-model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_0_with_augmentation/"
+model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_1_with_augmentation/"
 model.save(model_save_path)
 torch.save(val_losses, model_save_path + "val_loss.pt")
 torch.save(train_losses, model_save_path + "train_loss.pt")

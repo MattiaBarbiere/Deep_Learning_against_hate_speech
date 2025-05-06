@@ -18,11 +18,11 @@ def collate_fn(batch):
     return list(images), list(texts), labels
 
 
-def get_optimizer_and_criterion(model, lr=1e-5):
+def get_optimizer_and_criterion(model, lr=1e-5, weight_decay=0.01):
     """
     Returns an AdamW optimizer and a cross-entropy loss function.
     """
-    optimizer = AdamW(model.parameters(), lr=lr, weight_decay=0.01)
+    optimizer = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     criterion = nn.CrossEntropyLoss()
     return optimizer, criterion
 
