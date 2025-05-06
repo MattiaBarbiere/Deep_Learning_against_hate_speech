@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - override hydra/launcher: submitit_slurm
+  - override hydra/launcher: submitit_slurm # Comment this line to run locally
 
 hydra:
   run:
@@ -15,6 +15,7 @@ hydra:
   job:
     chdir: True
 
+  # Comment the following lines to disable the submitit launcher and run locally
   launcher:
     # submitit_folder: ${hydra.sweep.dir}/.submitit/%j
     timeout_min: 10
