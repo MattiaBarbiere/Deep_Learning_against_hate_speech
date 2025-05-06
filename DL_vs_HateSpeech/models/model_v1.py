@@ -5,7 +5,7 @@ from DL_vs_HateSpeech.models.base_model import BaseModel
 from DL_vs_HateSpeech.CLIP import FineTunedCLIP
 from DL_vs_HateSpeech.transformer_models.attention_transformer import AttentionClassifier
 
-class ModelV0(nn.Module, BaseModel):
+class ModelV1(nn.Module, BaseModel):
     def __init__(self, clip_model_type="32", hidden_dim=256, dropout=0.1):
         nn.Module.__init__(self)
         BaseModel.__init__(self)
