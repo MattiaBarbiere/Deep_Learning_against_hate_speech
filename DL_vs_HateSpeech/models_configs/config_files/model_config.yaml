@@ -4,7 +4,7 @@ defaults:
 
 hydra:
   run:
-    dir: ./DL_vs_HateSpeech/models/model_checkpoints
+    dir: ./DL_vs_HateSpeech/models/model_checkpoints/${model.type}_clip_${model.model_kwargs.clip_model_type}_aug_${train.augmentation}
   sweep:
     dir: ./DL_vs_HateSpeech/models/model_checkpoints
     subdir: ${model.type}_clip_${model.model_kwargs.clip_model_type}_aug_${train.augmentation}
@@ -53,7 +53,7 @@ model:
 
 train:
   batch_size: 32 
-  epochs: 1
+  epochs: 0
   optimizer: "Adam"
   lr: 1e-5
   augmentation: True

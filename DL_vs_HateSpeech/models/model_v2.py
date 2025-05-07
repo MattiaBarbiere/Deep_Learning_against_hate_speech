@@ -39,6 +39,7 @@ class ModelV2(nn.Module, BaseModel):
 
         # Get joint embeddings from FineTunedCLIP
         joint_embeddings = self.clip(text, images) # (batch_size, seq_len + num_patches + 1, embedding_dim)
+        print("Joint embeddings shape:", joint_embeddings.shape)
         
         # Classification
         logits = self.classifier(joint_embeddings, attention_mask)
@@ -62,18 +63,24 @@ class ModelV2(nn.Module, BaseModel):
         return torch.softmax(logits, dim=-1)
 
 
-    def save(self, path):
+    def save(self, path=None):
         """
-        Save the model state dictionary to the specified path, including attention weights.
+        Save the model state dictionary to the specified path.
         
         Args:
-            path (str): The path to save the model.
+            path (str): The path to save the model. Default is None, which saves to the current directory.
         """
         # Make sure the clip weights are frozen
         self.assert_frozen_params()
 
         # Create the directory if it doesn't exist
-        os.makedirs(os.path.dirname(path), exist_ok=True)
+        if path is None:
+            path = os.path.join(os.getcwd())
+        else:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+        
+        # Make sure the clip weights are frozen
+        self.assert_frozen_params()
 
         # Get attention weights from both components
         clip_text_attn, clip_image_attn = self.clip.get_attention_weights()
