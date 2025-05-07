@@ -34,12 +34,13 @@ def main(cfg: DictConfig):
     EPOCHS = cfg.train.epochs
     AUGMENTATION = cfg.train.augmentation
     WEIGHT_DECAY = cfg.train.weight_decay
+    DATA_SUBSET = cfg.train.data_subset
     model_class = MODEL_NAMES[cfg.model.type]
     model_kwargs = cfg.model.model_kwargs
 
     # Load Data
-    train_dataset = DataLoader(type="train")
-    val_dataset = DataLoader(type="val")
+    train_dataset = DataLoader(type="train", subset=DATA_SUBSET)
+    val_dataset = DataLoader(type="val", subset=DATA_SUBSET)
 
     train_loader = TorchDataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_fn)
     val_loader = TorchDataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=collate_fn)
