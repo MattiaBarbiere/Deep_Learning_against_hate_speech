@@ -74,6 +74,16 @@ def attention_rollout(model, text, image):
     print("Shapes of iterables:", clip_text_attn[10].shape, clip_image_attn[10].shape)
     print("Shapes of iterables:", clip_text_attn[11].shape, clip_image_attn[11].shape)
 
+    dim_text_mat = clip_text_attn[0].shape[2]
+    dim_image_mat = clip_image_attn[0].shape[2]
+    print("Dimensions of text and image matrices:", dim_text_mat, dim_image_mat)
+    complete_attn_image = clip_image_attn + tuple([c[:,-dim_image_mat:, -dim_image_mat:].unsqueeze(0) for c in classifier_attn])
+    rollout = complete_attn_image[-1].clone()
+    for ten in reversed(complete_attn_image[:-1]):
+        print("Shape of complete attention image:", ten.shape)
+        rollout = torch.matmul(rollout, ten)
+        print("Shape of rollout:", rollout.shape)
+
 
 
 
