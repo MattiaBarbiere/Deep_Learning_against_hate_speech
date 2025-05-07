@@ -19,7 +19,7 @@ from DL_vs_HateSpeech.utils import check_frozen_params
 sys.path.append(os.path.abspath(".."))
 
 
-@hydra.main(version_base=None, config_path="config_files", config_name="model_v1_config.yaml")
+@hydra.main(version_base=None, config_path="config_files", config_name="model_config.yaml")
 def main(cfg: DictConfig):
 
     # Device setup

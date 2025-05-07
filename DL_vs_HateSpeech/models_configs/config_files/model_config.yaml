@@ -45,7 +45,7 @@ hydra:
 
 
 model:
-  type: "ModelV0"
+  type: "ModelV2"
   model_kwargs:
     clip_model_type: "32"
     hidden_dim: 256

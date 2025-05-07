@@ -6,7 +6,7 @@ class CustomTransformerEncoderLayer(nn.TransformerEncoderLayer):
         super().__init__(*args, **kwargs)
         self._last_attention_weights = None
 
-    def forward(self, src, src_mask=None, src_key_padding_mask=None):
+    def forward(self, src, src_mask=None, src_key_padding_mask=None, is_causal=False):
         # Self attention part
         src2, attn_weights = self.self_attn(
             src, src, src,
