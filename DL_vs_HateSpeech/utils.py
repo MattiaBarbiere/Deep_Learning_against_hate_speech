@@ -1,6 +1,8 @@
 from DL_vs_HateSpeech.env_constants import PATH_TO_JSON_US_POL, PATH_TO_JSON_COVID_19
 import pandas as pd
 import json
+import os
+import yaml
 
 # Dict that assigns each label to a number
 LABEL_TO_NUM = {
@@ -155,3 +157,19 @@ def check_frozen_params(model, print_layers=False):
         for name, param in model.named_parameters():
             print(f"{name}: requires_grad = {param.requires_grad}")
     print(f"Trainable params: {trainable}, Frozen params: {frozen}")
+
+
+def read_yaml_file(path):
+    """
+    Function that opens the yaml file and returns the parameters
+    """
+    # Get the absolute path
+    path = os.path.abspath(path)
+    with open(os.path.join(path, ".hydra", "config.yaml"), 'r') as stream:
+        try:
+            params = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+    
+    # Organise the dict of parameters
+    return params
