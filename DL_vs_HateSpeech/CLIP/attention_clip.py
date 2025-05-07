@@ -20,7 +20,8 @@ class AttentionCLIP(nn.Module):
             raise ValueError("model_type must be '32' or '16'.")
 
         # Load the CLIP model and processor
-        self.pretrained_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch" + model_type, output_hidden_states=True)
+        self.pretrained_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch" + model_type, 
+                                                          output_hidden_states=True, attn_implementation="eager")
         self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch" + model_type, use_fast=False)
         self.config = self.pretrained_model.config
 
