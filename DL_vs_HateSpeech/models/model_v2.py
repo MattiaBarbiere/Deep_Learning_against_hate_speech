@@ -39,7 +39,7 @@ class ModelV2(nn.Module, BaseModel):
 
         # Get joint embeddings from FineTunedCLIP
         joint_embeddings = self.clip(text, images) # (batch_size, seq_len + num_patches + 1, embedding_dim)
-        print("Joint embeddings shape:", joint_embeddings.shape)
+        # print("Joint embeddings shape:", joint_embeddings.shape)
         
         # Classification
         logits = self.classifier(joint_embeddings, attention_mask)
