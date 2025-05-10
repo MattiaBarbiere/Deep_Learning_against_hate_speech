@@ -63,12 +63,13 @@ class ModelV2(nn.Module, BaseModel):
         return torch.softmax(logits, dim=-1)
 
 
-    def save(self, path=None):
+    def save(self, path=None, file_name=None):
         """
         Save the model state dictionary to the specified path.
         
         Args:
             path (str): The path to save the model. Default is None, which saves to the current directory.
+            file_name (str): The name of the file to save the model. Default is None, which saves as "model.pth".
         """
         # Make sure the clip weights are frozen
         self.assert_frozen_params()
@@ -78,6 +79,10 @@ class ModelV2(nn.Module, BaseModel):
             path = os.path.join(os.getcwd())
         else:
             os.makedirs(os.path.dirname(path), exist_ok=True)
+
+        # Create the file name if not provided
+        if file_name is None:
+            file_name = "model.pth"
         
         # Make sure the clip weights are frozen
         self.assert_frozen_params()
@@ -101,7 +106,7 @@ class ModelV2(nn.Module, BaseModel):
                 "clip_image": clip_image_attn,
                 "classifier": classifier_attn
             }
-        }, os.path.join(path, "model.pth"))
+        }, os.path.join(path, file_name))
         
     def get_model_attention(self):
         """

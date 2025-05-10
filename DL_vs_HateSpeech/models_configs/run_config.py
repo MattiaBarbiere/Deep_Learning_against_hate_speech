@@ -70,9 +70,11 @@ def main(cfg: DictConfig):
         print(f"Val Accuracy: {val_accuracy * 100:.2f}%")
         val_losses.append(val_loss)
 
+        # Save the model very 10 epochs
+        if (epoch + 1) % 10 == 0:
+            model.save(file_name=f"model_epoch_{epoch + 1}.pth")
 
-    # model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_1_with_augmentation/"
-    model.save()
+
     torch.save(val_losses, "./val_loss.pt")
     torch.save(train_losses, "./train_loss.pt")
 
