@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import torch
 import os
 
-def plot_losses_from_path(path, save_path=None):
+def plot_losses_from_path(path, save_path=None, title="Training and Validation Loss"):
     """
     Loads training and validation losses from specified path and plots them.
 
@@ -13,9 +13,9 @@ def plot_losses_from_path(path, save_path=None):
     train_losses = torch.load(os.path.join(path, "train_loss.pt"))
     val_losses = torch.load(os.path.join(path, "val_loss.pt"))
     
-    plot_losses(train_losses, val_losses, save_path)
+    plot_losses(train_losses, val_losses, save_path,title=title)
 
-def plot_losses(train_losses, val_losses, save_path=None):
+def plot_losses(train_losses, val_losses, save_path=None, title="Training and Validation Loss"):
     """
     Plots training and validation loss curves.
 
@@ -29,7 +29,7 @@ def plot_losses(train_losses, val_losses, save_path=None):
     plt.plot(val_losses, label='Validation Loss', marker='o')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
-    plt.title('Training and Validation Loss')
+    plt.title(title)
     plt.legend()
     plt.grid(True)
     
