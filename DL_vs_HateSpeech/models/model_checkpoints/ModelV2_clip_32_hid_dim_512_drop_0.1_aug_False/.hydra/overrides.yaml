@@ -1,0 +1,4 @@
+- model.model_kwargs.clip_model_type=32
+- model.model_kwargs.hidden_dim=512
+- model.model_kwargs.dropout=0.1
+- train.augmentation=False

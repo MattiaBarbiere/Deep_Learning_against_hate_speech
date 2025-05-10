@@ -70,7 +70,7 @@ def main(cfg: DictConfig):
         print(f"Val Accuracy: {val_accuracy * 100:.2f}%")
         val_losses.append(val_loss)
 
-        # Save the model very 10 epochs
+        # Save the model every 10 epochs
         if (epoch + 1) % 10 == 0:
             model.save(file_name=f"model_epoch_{epoch + 1}.pth")
 
