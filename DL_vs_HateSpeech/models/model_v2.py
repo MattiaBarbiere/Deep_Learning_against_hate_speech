@@ -101,11 +101,11 @@ class ModelV2(nn.Module, BaseModel):
             },
             "clip.linear1": self.clip.linear1.state_dict(),
             "classifier": self.classifier.state_dict(),
-            "attention_weights": {
-                "clip_text": clip_text_attn,
-                "clip_image": clip_image_attn,
-                "classifier": classifier_attn
-            }
+            # "attention_weights": {
+            #     "clip_text": clip_text_attn,
+            #     "clip_image": clip_image_attn,
+            #     "classifier": classifier_attn
+            # }
         }, os.path.join(path, file_name))
         
     def get_model_attention(self):

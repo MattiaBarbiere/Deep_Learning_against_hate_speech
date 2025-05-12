@@ -2,7 +2,7 @@ import torch
 from DL_vs_HateSpeech.models import load_model_from_path
 from DL_vs_HateSpeech.utils import read_yaml_file
 from DL_vs_HateSpeech.loading_data.dataloader import DataLoader
-from torchsummary import summary
+# from torchsummary import summary
 
 def plot_attention_rollout(path, device="cpu"):
     # Load model from path
@@ -91,7 +91,8 @@ def attention_rollout(model, text, image):
 
 
 if __name__ == "__main__":
-    path = "DL_vs_HateSpeech\models\model_checkpoints\ModelV2_clip_32_aug_True"
+    path = "DL_vs_HateSpeech\models\model_checkpoints\ModelV0_clip_32_aug_True"
+    
 
     plot_attention_rollout(path, device="cpu")
     print("Attention rollout complete.")
