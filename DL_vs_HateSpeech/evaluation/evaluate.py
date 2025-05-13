@@ -24,7 +24,7 @@ def evaluate(model, dataloader, criterion, device):
             preds = torch.round(probs)
 
             # Compute accuracy and f1 score
-            f1 = f1_score(labels.cpu(), preds.cpu(), average='weighted')
+            f1 = f1_score(labels.cpu(), preds.cpu(), average='binary')
             accuracy = accuracy_score(labels.cpu(), preds.cpu())
 
             # Calculate accuracy
