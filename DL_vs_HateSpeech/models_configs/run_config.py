@@ -52,6 +52,8 @@ def main(cfg: DictConfig):
     # Training and evaluation loop
     train_losses = []
     val_losses = []
+    f1_scores = []
+    accuracies = []
 
     # Check how many parameters are frozen
     check_frozen_params(model, print_layers=False)
@@ -65,10 +67,12 @@ def main(cfg: DictConfig):
         train_losses.append(train_loss)
 
         # Evaluation loss and accuracy
-        val_loss, val_accuracy = evaluate(model, val_loader, criterion, device)
+        val_loss, accuracy, f1 = evaluate(model, val_loader, criterion, device)
         print(f"Val Loss: {val_loss:.4f}")
-        print(f"Val Accuracy: {val_accuracy * 100:.2f}%")
+        print(f"Val Accuracy: {accuracy * 100:.2f}%")
         val_losses.append(val_loss)
+        accuracies.append(accuracy)
+        f1_scores.append(f1)
 
         # Save the model every 10 epochs
         if (epoch + 1) % 10 == 0:

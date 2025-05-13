@@ -51,7 +51,7 @@ class AttentionCLIP(nn.Module):
 
         # Project image hidden states to match text hidden states
         image_hidden_states = self.linear1(image_hidden_states)
-        return torch.cat([text_hidden_states, image_hidden_states], dim=1)
+        return torch.cat([image_hidden_states, text_hidden_states], dim=1)
 
     def get_attention_weights(self):
         return self.text_attentions, self.image_attentions

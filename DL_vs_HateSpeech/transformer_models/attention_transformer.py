@@ -62,8 +62,8 @@ class AttentionClassifier(nn.Module):
         x = self.transformer(token_embeddings, src_key_padding_mask=src_key_padding_mask)
 
         cls_token = x[:, 0]
-        x = self.dropout(cls_token)
-        x = F.relu(self.fc1(x))
+        # x = self.dropout(cls_token)
+        x = F.relu(self.fc1(cls_token))
         x = self.dropout(x)
         x = self.fc2(x)
         return x

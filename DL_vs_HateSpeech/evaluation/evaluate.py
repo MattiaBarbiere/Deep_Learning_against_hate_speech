@@ -1,5 +1,6 @@
 import torch
 from tqdm import tqdm
+from sklearn.metrics import f1_score, accuracy_score
 
 def evaluate(model, dataloader, criterion, device):
     model.eval()
@@ -21,11 +22,14 @@ def evaluate(model, dataloader, criterion, device):
             # Compute predictions (get the class with the highest probability)
             preds = torch.argmax(probs, dim=1)
 
+            # Compute accuracy and f1 score
+            f1 = f1_score(labels.cpu(), preds.cpu(), average='weighted')
+            accuracy = accuracy_score(labels.cpu(), preds.cpu())
+
             # Calculate accuracy
             correct += (preds == labels).sum().item()
             total += labels.size(0)
 
     avg_loss = total_loss / len(dataloader)
-    accuracy = correct / total
 
-    return avg_loss, accuracy
+    return avg_loss, accuracy, f1
