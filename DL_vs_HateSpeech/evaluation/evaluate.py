@@ -16,7 +16,7 @@ def evaluate(model, dataloader, criterion, device):
             probs = model(texts, images)
 
             # Compute loss
-            loss = criterion(probs, labels)
+            loss = criterion(probs.squeeze(1), labels)
             total_loss += loss.item()
 
             # Compute predictions (get the class with the highest probability)
@@ -24,7 +24,7 @@ def evaluate(model, dataloader, criterion, device):
             preds = torch.round(probs)
 
             # Compute accuracy and f1 score
-            f1 = f1_score(labels.cpu(), preds.cpu(), average='binary')
+            f1 = f1_score(labels.cpu(), preds.cpu(), average=None)
             accuracy = accuracy_score(labels.cpu(), preds.cpu())
 
             # Calculate accuracy
