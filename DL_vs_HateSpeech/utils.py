@@ -8,7 +8,12 @@ import yaml
 LABEL_TO_NUM = {
     "not harmful": 0,
     "somewhat harmful": 1,
-    "very harmful": 2
+    "very harmful": 1
+}
+
+NUM_TO_LABEL = {
+    0: "not harmful",
+    1: "harmful",
 }
 
 def get_label_num(label):
@@ -48,10 +53,8 @@ def get_label_str(label_num):
     Returns:
         str: The string value of the label.
     """
-    for key, value in LABEL_TO_NUM.items():
-        if value == label_num:
-            return key
-    raise ValueError(f"Label number {label_num} not found in LABEL_TO_NUM dictionary.")
+    
+    return NUM_TO_LABEL[label_num]
 
 def get_label_str_list(label_num_list):
     """

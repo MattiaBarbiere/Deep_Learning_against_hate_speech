@@ -6,13 +6,14 @@ from DL_vs_HateSpeech.CLIP import AttentionCLIP
 from DL_vs_HateSpeech.transformer_models.attention_transformer import AttentionClassifier
 
 class ModelV2(nn.Module, BaseModel):
-    def __init__(self, clip_model_type="32", hidden_dim=256, dropout=0.1):
+    def __init__(self, clip_model_type="32", hidden_dim=256, dropout=0.1, output_dim=3):
         nn.Module.__init__(self)
         BaseModel.__init__(self)
         # Save the args
         self.clip_model_type = clip_model_type
         self.hidden_dim = hidden_dim
         self.dropout = dropout
+        self.output_dim = output_dim
 
         # Multimodal CLIP
         self.clip = AttentionCLIP(model_type=clip_model_type)
@@ -22,7 +23,8 @@ class ModelV2(nn.Module, BaseModel):
         self.classifier = AttentionClassifier(
             embedding_dim=embedding_dim,
             hidden_dim=hidden_dim,
-            dropout=dropout
+            dropout=dropout,
+            output_dim=output_dim
         )
 
         # Make sure the clip weights are frozen
@@ -60,7 +62,12 @@ class ModelV2(nn.Module, BaseModel):
         logits = self.classifier(joint_embeddings)
         
         # Return softmax probabilities
-        return torch.softmax(logits, dim=-1)
+        if self.output_dim == 3:
+            return torch.softmax(logits, dim=-1)
+        elif self.output_dim == 1:
+            return torch.sigmoid(logits)
+        else:
+            raise ValueError(f"Unknown output dimension: {self.output_dim}. Must be 1 or 3.")
 
 
     def save(self, path=None, file_name=None):

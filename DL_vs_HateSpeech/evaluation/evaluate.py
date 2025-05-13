@@ -20,7 +20,8 @@ def evaluate(model, dataloader, criterion, device):
             total_loss += loss.item()
 
             # Compute predictions (get the class with the highest probability)
-            preds = torch.argmax(probs, dim=1)
+            # preds = torch.argmax(probs, dim=1)
+            preds = torch.round(probs)
 
             # Compute accuracy and f1 score
             f1 = f1_score(labels.cpu(), preds.cpu(), average='weighted')
