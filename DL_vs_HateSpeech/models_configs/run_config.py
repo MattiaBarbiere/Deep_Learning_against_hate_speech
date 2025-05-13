@@ -81,6 +81,8 @@ def main(cfg: DictConfig):
 
     torch.save(val_losses, "./val_loss.pt")
     torch.save(train_losses, "./train_loss.pt")
+    torch.save(accuracies, "./accuracies.pt")
+    torch.save(f1_scores, "./f1_scores.pt")
 
 
     # Plot at the end
