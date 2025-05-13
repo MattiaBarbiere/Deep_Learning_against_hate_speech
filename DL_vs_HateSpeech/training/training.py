@@ -4,6 +4,19 @@ from torch.optim import AdamW
 from tqdm import tqdm
 from DL_vs_HateSpeech.models.augmentation import augment_batch
 
+class CustomBCELoss(nn.Module):
+    def __init__(self):
+        super(CustomBCELoss, self).__init__()
+        self.criterion = nn.BCELoss()
+
+    def forward(self, inputs, targets):
+        # Ensure inputs and targets are of the same shape
+        if inputs.shape != targets.shape:
+            raise ValueError(f"Shape mismatch: {inputs.shape} vs {targets.shape}")
+        # Ensure inputs are in the range [0, 1]
+        inputs = torch.sigmoid(inputs)
+        return self.criterion(inputs, targets)
+
 
 def collate_fn(batch):
     """
@@ -14,7 +27,8 @@ def collate_fn(batch):
     images, texts, labels = zip(*batch)
 
     # Convert labels to tensors
-    labels = torch.tensor(labels, dtype=torch.long)
+    # labels = torch.tensor(labels, dtype=torch.long)
+    labels = torch.tensor(labels, dtype=torch.float32)
     return list(images), list(texts), labels
 
 
@@ -23,7 +37,7 @@ def get_optimizer_and_criterion(model, lr=1e-5, weight_decay=0.01):
     Returns an AdamW optimizer and a cross-entropy loss function.
     """
     optimizer = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-    criterion = nn.CrossEntropyLoss()
+    criterion = CustomBCELoss()
     return optimizer, criterion
 
 
@@ -52,7 +66,7 @@ def train_epoch(model, dataloader, optimizer, criterion, device, augmentation=Tr
         probs = model(texts, images)
 
         # Compute loss
-        loss = criterion(probs, labels)
+        loss = criterion(probs.squeeze(1), labels)
 
         # Backward pass and optimization
         loss.backward()

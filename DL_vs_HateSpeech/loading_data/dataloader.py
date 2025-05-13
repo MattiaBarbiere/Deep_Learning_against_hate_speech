@@ -62,7 +62,7 @@ class DataLoader(Dataset):
         if len(label_raw) == 0:
             raise ValueError(f"Label is empty for image {image_name}")
         label = get_label_num(label_raw)
-        label = torch.tensor(label).long()
+        label = torch.tensor(label)
 
         if self.subset == "both":
             source = row["source"]
