@@ -152,7 +152,6 @@ def attention_rollout(model, text, image, self_attn=True):
 if __name__ == "__main__":
     path = "DL_vs_HateSpeech/models/model_checkpoints/ModelV2_single_class"
     
-    # Call the function to plot attention rollout
+    # Call plot attention rollout function
     plot_attention_rollout(path, self_attn=True, device="cpu")
     print("Attention rollout complete.")
-
