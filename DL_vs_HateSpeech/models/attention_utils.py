@@ -1,13 +1,21 @@
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
+
 from DL_vs_HateSpeech.models import load_model_from_path
 from DL_vs_HateSpeech.utils import read_yaml_file, get_label_str_list
 from DL_vs_HateSpeech.loading_data.dataloader import DataLoader
 from torch.utils.data import DataLoader as TorchDataLoader
 from DL_vs_HateSpeech.training.training import collate_fn
-import matplotlib.pyplot as plt
-import numpy as np
 
 def plot_attention_rollout(path, device="cpu"):
+    """
+    Plot the attention rollout for a given model and inputs.
+
+    Args:
+        path (str): Path to the model checkpoint.
+        device (str): Device to load the model on. Default is "cpu".
+    """
     # Load model from path
     model = load_model_from_path(path, file_name="model_epoch_20.pth", device=device)
 
@@ -22,14 +30,16 @@ def plot_attention_rollout(path, device="cpu"):
     train_loader = TorchDataLoader(train_dataset, batch_size=1, shuffle=True, collate_fn=collate_fn)
     test_loader = TorchDataLoader(test_dataset, batch_size=1, shuffle=True, collate_fn=collate_fn)
 
+    # Get the first batch of training data
     image, text, labels = next(iter(train_loader))
+
+    # Print shapes and labels
     print("Image shape:", image[0].size)
     print("Label:", get_label_str_list(labels))
 
+    # Perform attention rollout
     attention_rollout(model, text, image)
 
-
-# A function that performs attention rollout
 def attention_rollout(model, text, image):
     """
     Perform attention rollout for a given model and inputs.
@@ -96,21 +106,27 @@ def attention_rollout(model, text, image):
         mean_attn = ten
         if len(mean_attn.shape) == 4: 
             mean_attn = mean_attn.mean(dim=1)
-        mean_attn /= mean_attn.sum(dim=-1, keepdim=True)
+        
         print("Shape of mean attention:", mean_attn.shape)
         print("Shape of rollout:", rollout.shape)
+
         id_mat = torch.eye(mean_attn.shape[1]).to(mean_attn.device)
         if mean_attn.shape[1] == mean_attn.shape[2]:
             mean_attn = mean_attn + id_mat.unsqueeze(0)
         else:
             extra_zeros = torch.zeros(mean_attn.shape[1], dim_text_mat).to(mean_attn.device)
+
             print("\n Shape of extra zeros:", extra_zeros.shape)
             print("Shape of id_mat:", id_mat.shape)
+
             id_rect = torch.cat((id_mat, extra_zeros), dim=-1)
+            
             print("Shape of id_rect:", id_rect.shape)
             mean_attn = mean_attn + id_rect.unsqueeze(0)
-        
+
+        mean_attn /= mean_attn.sum(dim=-1, keepdim=True)
         rollout = torch.matmul(rollout, mean_attn)
+        
     print("Shape of rollout:", rollout.shape)
 
     attn = rollout[0, 1:, 0]
