@@ -13,7 +13,7 @@ def evaluate(model, dataloader, criterion, device):
             labels = labels.to(device)
 
             # Forward pass
-            probs = model(texts, images)
+            probs = model.predict(texts, images)
 
             # Compute loss
             loss = criterion(probs.squeeze(1), labels)
@@ -24,8 +24,9 @@ def evaluate(model, dataloader, criterion, device):
             preds = torch.round(probs)
 
             # Compute accuracy and f1 score
-            print("Preds:", preds)
-            print("Labels:", labels)
+            # print("Probs:", probs)
+            # print("Preds:", preds)
+            # print("Labels:", labels)
             f1 = f1_score(labels.cpu(), preds.cpu(), average=None)
             accuracy = accuracy_score(labels.cpu(), preds.cpu())
 
