@@ -38,9 +38,10 @@ def plot_metrics(accuracy, f1, save_path=None, title="Training and Validation Me
         save_path (str, optional): If provided, saves the plot to this path.
     """
     plt.figure(figsize=(8, 6))
-    print(len(f1))
+    print(len(f1[0]))
     plt.plot(accuracy, label='Accuracy', marker='o')
-    plt.plot(f1, label='F1', marker='o')
+    plt.plot([f1[i][0] for i in range(len(f1))], label='F1, label 0', marker='o')
+    plt.plot([f1[i][1] for i in range(len(f1))], label='F1, label 1', marker='o')
     plt.xlabel('Epoch')
     plt.ylabel('Metrics')
     plt.title(title)
