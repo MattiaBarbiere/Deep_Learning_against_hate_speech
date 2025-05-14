@@ -49,10 +49,10 @@ def attention_rollout(model, text, image):
     model.eval()
 
     # Forward pass through the model to get the attention weights
-    probs = model(text, image)
+    probs = model.predict(text, image)
 
     # Get the prediction
-    pred = torch.argmax(probs, dim=1)
+    pred = torch.round(probs).squeeze(0)
     print("Prediction:", get_label_str_list(pred))
     
     # Get the dict of attention weights from the model
@@ -68,15 +68,42 @@ def attention_rollout(model, text, image):
     # Get the dimensions of the text and image attention matrices respectively
     dim_text_mat = clip_text_attn[0].shape[2]
     dim_image_mat = clip_image_attn[0].shape[2]
+    print("Dimensions of text and image attention matrices:", dim_text_mat, dim_image_mat, len(clip_text_attn))
+    print("Classifier attention shape:", classifier_attn[0].shape, len(classifier_attn))
 
     # Extract the attention weights for the image
-    complete_attn_image = clip_image_attn + tuple([c[:,-dim_image_mat:, -dim_image_mat:].unsqueeze(0) for c in classifier_attn])
+    # complete_attn_image = clip_image_attn + tuple([c[:, :dim_image_mat, :].unsqueeze(0) for c in classifier_attn])
+    attn_cumulative_tuple = [classifier_attn[0][:, :dim_image_mat, :]]
+    print("Shape of clip image attention:", attn_cumulative_tuple[0].shape)
+    for i in range(1, len(classifier_attn)):
+        attn_cumulative_tuple.append(classifier_attn[i])
+        print("Shape of classifier attention:", classifier_attn[i].shape)
+    
+    print("Shape of classifier attention:", attn_cumulative_tuple[0].shape, attn_cumulative_tuple[1].shape)
+    complete_attn_image = clip_image_attn + tuple(attn_cumulative_tuple)
 
+    print("Shape of complete attention image:", complete_attn_image[-2].shape, complete_attn_image[-1].shape)
+
+    for ten in complete_attn_image:
+        print("Shape of attention tensor:", ten.shape)
+    
+    
     # Perform attention rollout
     rollout = torch.eye(dim_image_mat).unsqueeze(0)
-    for ten in reversed(complete_attn_image):
-        mean_attn = ten.mean(dim=1)
+    for ten in complete_attn_image:
+        mean_attn = ten
+        if len(mean_attn.shape) == 4: 
+            mean_attn = mean_attn.mean(dim=1)
         mean_attn /= mean_attn.sum(dim=-1, keepdim=True)
+        print("Shape of mean attention:", mean_attn.shape)
+        print("Shape of rollout:", rollout.shape)
+        id_mat = torch.eye(dim_image_mat).unsqueeze(0).to(mean_attn.device)
+        if mean_attn.shape[1] == mean_attn.shape[2]:
+            mean_attn = mean_attn + id_mat
+        else:
+            extra_zeros = torch.zeros(mean_attn.shape[0], mean_attn.shape[1], dim_text_mat).to(mean_attn.device)
+            mean_attn = mean_attn + torch.cat((torch.eye(dim_image_mat).unsqueeze(0), extra_zeros), dim=-1)
+        
         rollout = torch.matmul(rollout, mean_attn)
     print("Shape of rollout:", rollout.shape)
 

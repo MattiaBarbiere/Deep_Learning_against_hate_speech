@@ -13,8 +13,8 @@ LABEL_TO_NUM = {
 }
 
 NUM_TO_LABEL = {
-    0: "not harmful",
-    1: "harmful",
+    0.0: "not harmful",
+    1.0: "harmful",
 }
 
 def get_label_num(label):
