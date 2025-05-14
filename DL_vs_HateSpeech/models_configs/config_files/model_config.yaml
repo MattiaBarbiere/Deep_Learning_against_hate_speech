@@ -7,10 +7,10 @@ hydra:
     dir: ./DL_vs_HateSpeech/models/model_checkpoints/${model.type}_clip_${model.model_kwargs.clip_model_type}_aug_${train.augmentation}
   sweep:
     dir: ./DL_vs_HateSpeech/models/model_checkpoints
-    subdir: ${model.type}_single_class
+    subdir: ${model.type}_single_class_clip_${model.model_kwargs.clip_model_type}
   sweeper:
     params:
-      model.model_kwargs.clip_model_type: "32"
+      model.model_kwargs.clip_model_type: "32, 16"
       model.model_kwargs.hidden_dim: 128
       model.model_kwargs.dropout: 0.25
       train.augmentation: True

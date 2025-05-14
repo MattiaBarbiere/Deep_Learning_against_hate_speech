@@ -3,7 +3,7 @@ hydra:
     dir: ./DL_vs_HateSpeech/models/model_checkpoints/${model.type}_clip_${model.model_kwargs.clip_model_type}_aug_${train.augmentation}
   sweep:
     dir: ./DL_vs_HateSpeech/models/model_checkpoints
-    subdir: ${model.type}_single_class
+    subdir: ${model.type}_single_class_clip_${model.model_kwargs.clip_model_type}
   launcher:
     submitit_folder: ${hydra.sweep.dir}/.submitit/%j
     timeout_min: 100
@@ -35,7 +35,7 @@ hydra:
     _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
     max_batch_size: null
     params:
-      model.model_kwargs.clip_model_type: '32'
+      model.model_kwargs.clip_model_type: 32, 16
       model.model_kwargs.hidden_dim: '128'
       model.model_kwargs.dropout: '0.25'
       train.augmentation: 'True'

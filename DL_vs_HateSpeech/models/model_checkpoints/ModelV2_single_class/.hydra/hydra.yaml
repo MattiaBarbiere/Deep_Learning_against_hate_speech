@@ -149,7 +149,7 @@ hydra:
     name: run_config
     chdir: true
     override_dirname: model.model_kwargs.clip_model_type=32,model.model_kwargs.dropout=0.25,model.model_kwargs.hidden_dim=128,train.augmentation=True
-    id: '2634442'
+    id: '2634540'
     num: 0
     config_name: model_config.yaml
     env_set: {}
