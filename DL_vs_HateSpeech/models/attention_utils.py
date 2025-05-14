@@ -36,7 +36,20 @@ def plot_attention_rollout(path, self_attn=True, device="cpu"):
     print("Label:", get_label_str_list(labels))
 
     # Perform attention rollout
-    attention_rollout(model, text, image, self_attn=self_attn)
+    attn_map, _ = attention_rollout(model, text, image, self_attn=self_attn)
+
+    # Plot the image and the attention weights side by side
+    plt.figure(figsize=(10, 5))
+    plt.subplot(1, 2, 1)
+    plt.imshow(image[0])
+    plt.axis('off')
+    plt.title("Image")
+    plt.subplot(1, 2, 2)
+    plt.title("Attention Weights")
+    plt.axis('off')
+    plt.imshow(attn_map.cpu().detach().numpy(), cmap='viridis')
+    plt.colorbar()
+    plt.show()
 
 def attention_rollout(model, text, image, self_attn=True):
     """
@@ -50,7 +63,8 @@ def attention_rollout(model, text, image, self_attn=True):
         self_attn (bool): Whether to consider self-attention. Default is True.
 
     Returns:
-        Tensor: The attention weights from the model of dims (text_shape, image_shape).
+        attn_map: The attention map obtained from the rollout.
+        orig_size: The original size of the image.
     """
     # Assert the model has a method called get_model_attention
     assert hasattr(model, 'get_model_attention'), "Model must have a method called get_model_attention"
@@ -129,24 +143,16 @@ def attention_rollout(model, text, image, self_attn=True):
     print("Shape of rollout:", rollout.shape, "\n")
 
     # Extract the attention weights for the image
-    attn = rollout[0, 1:, 0]
+    attn_flat = rollout[0, 1:, 0]
 
     # Reshape the attention weights to a square matrix
     dimension = np.sqrt(rollout.shape[1] - 1)
-    attn = 1 - attn.reshape(int(dimension), int(dimension))
+    attn_map = 1 - attn_flat.reshape(int(dimension), int(dimension))
 
-    # Plot the image and the attention weights side by side
-    plt.figure(figsize=(10, 5))
-    plt.subplot(1, 2, 1)
-    plt.imshow(image[0])
-    plt.axis('off')
-    plt.title("Image")
-    plt.subplot(1, 2, 2)
-    plt.title("Attention Weights")
-    plt.axis('off')
-    plt.imshow(attn.cpu().detach().numpy(), cmap='viridis')
-    plt.colorbar()
-    plt.show()
+    # Extract original image dimensions
+    orig_size = image[0].size[::-1] # (H, W)
+
+    return attn_map, orig_size
 
 
 if __name__ == "__main__":
