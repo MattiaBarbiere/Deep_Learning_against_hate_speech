@@ -38,7 +38,7 @@ def plot_attention_rollout(path, self_attn=True, blur=True, alpha=0.5, device="c
     print("Label:", get_label_str_list(labels))
 
     # Perform attention rollout
-    attn_map, orig_size = attention_rollout(model, text, image, self_attn=self_attn)
+    attn_map, orig_size = attention_rollout_image(model, text, image, self_attn=self_attn)
 
     # Plot the image and the attention weights side by side
     plt.figure(figsize=(10, 5))
@@ -56,9 +56,15 @@ def plot_attention_rollout(path, self_attn=True, blur=True, alpha=0.5, device="c
     # Overlay attention on image
     overlay_attention_on_image(attn_map, image, orig_size, blur=blur, alpha=alpha)
 
-def attention_rollout(model, text, image, self_attn=True):
+    # Perform text attention rollout
+    # attn_weights, tokens = attention_rollout_text(model, text, image)
+
+    # Plot text attention
+    # plot_text_attention(attn_weights, tokens)
+
+def attention_rollout_image(model, text, image, self_attn=True):
     """
-    Perform attention rollout for a given model and inputs. Considers cross-attention
+    Perform attention rollout on image for a given model and inputs. Can considers cross-attention
     between text and image.
 
     Args:
@@ -159,6 +165,74 @@ def attention_rollout(model, text, image, self_attn=True):
 
     return attn_map, orig_size
 
+def attention_rollout_text(model, text, image):
+    """
+    Perform attention rollout on text tokens for a given model and inputs.
+    This includes both the text encoder and classifier self-attention layers.
+
+    Args:
+        model: The model to perform attention rollout on. Must have a method called get_model_attention.
+        text: The text input for the model.
+        image: The image input for the model.
+
+    Returns:
+        final_attn: 1D tensor of attention importance per token after rollout.
+        tokens: The list of corresponding text tokens.
+    """
+    # Move model to eval mode
+    model.eval()
+
+    # Forward pass through the model to get the attention weights
+    _ = model.predict(text, image)
+
+    # Get the dict of attention weights from the model
+    attn = model.get_model_attention()
+
+    # Unpack the attention weights
+    clip_text_attn = attn['clip_text']
+    classifier_attn = attn['classifier']
+
+    # Get the dimension of the text attention matrix
+    dim_text_mat = clip_text_attn[0].shape[2]
+
+    # Extract the attention weights for the text from the classifier
+    classifier_text_attn = [classifier_attn[0][:, :dim_text_mat, :dim_text_mat]]
+    for i in range(1, len(classifier_attn)):
+        classifier_text_attn.append(classifier_attn[i][:, :dim_text_mat, :dim_text_mat])
+
+    # Combine CLIP text attention with classifier attention
+    complete_attn_text = clip_text_attn + tuple(classifier_text_attn)
+
+    # Initialize the rollout matrix as an identity matrix
+    rollout = torch.eye(dim_text_mat).unsqueeze(0)
+
+    # Loop through the attention weights and perform the rollout
+    for attn in complete_attn_text:
+        # Check if the attention weights are 4D (batch_size, num_heads, seq_len, seq_len)
+        # If so, take the mean across heads
+        if len(attn.shape) == 4:
+            attn = attn.mean(dim=1)
+
+        # Initialize the identity matrix
+        id_mat = torch.eye(attn.shape[1]).to(attn.device)
+
+        # Add the identity matrix to the attention weights (residual connection)
+        attn = attn + id_mat.unsqueeze(0)
+
+        # Normalize the attention weights
+        attn /= attn.sum(dim=-1, keepdim=True)
+
+        # Forward matrix multiplication
+        rollout = torch.matmul(rollout, attn)
+
+    # Extract the attention weights for the text tokens (excluding CLS token at index 0)
+    final_attn = rollout[0, 1:, 0]
+
+    # Convert input text into tokens (must match those used in model input)
+    tokens = model.processor.tokenizer.tokenize(text)
+
+    return final_attn, tokens
+
 def overlay_attention_on_image(attn_map, image, orig_size, blur=True, alpha=0.5):
     """
     Upsample and overlay attention map onto the original image (PIL-based input).
@@ -199,6 +273,21 @@ def overlay_attention_on_image(attn_map, image, orig_size, blur=True, alpha=0.5)
     plt.imshow(attn_overlay, cmap='viridis', alpha=alpha)
     plt.axis('off')
     plt.title("Attention Overlay")
+    plt.show()
+
+def plot_text_attention(weights, tokens):
+    """
+    Plot the attention weights for each token.
+    
+    Args:
+        weights (Tensor): Attention weights for each token.
+        tokens (list): List of tokens corresponding to the weights.
+    """
+    plt.figure(figsize=(len(tokens) * 0.5, 2))
+    plt.bar(range(len(tokens)), weights.cpu().numpy())
+    plt.xticks(range(len(tokens)), tokens, rotation=90)
+    plt.title("Attention per Token")
+    plt.tight_layout()
     plt.show()
 
 
