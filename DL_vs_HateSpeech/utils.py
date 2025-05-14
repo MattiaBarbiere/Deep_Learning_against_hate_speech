@@ -3,6 +3,7 @@ import pandas as pd
 import json
 import os
 import yaml
+import torch
 
 # Dict that assigns each label to a number
 LABEL_TO_NUM = {
@@ -53,7 +54,8 @@ def get_label_str(label_num):
     Returns:
         str: The string value of the label.
     """
-    
+    if isinstance(label_num, torch.Tensor):
+        label_num = label_num.item()
     return NUM_TO_LABEL[label_num]
 
 def get_label_str_list(label_num_list):

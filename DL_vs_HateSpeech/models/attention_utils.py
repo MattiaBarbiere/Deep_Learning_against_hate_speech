@@ -106,7 +106,7 @@ def attention_rollout(model, text, image):
 
 
 if __name__ == "__main__":
-    path = "DL_vs_HateSpeech\models\model_checkpoints\ModelV2_clip_16_hid_dim_64_drop_0.1_aug_False"
+    path = "DL_vs_HateSpeech\models\model_checkpoints\ModelV2_single_class"
     
 
     plot_attention_rollout(path, device="cpu")

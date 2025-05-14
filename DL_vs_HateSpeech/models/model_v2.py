@@ -104,7 +104,8 @@ class ModelV2(nn.Module, BaseModel):
             "model_args": {
                 "clip_model_type": self.clip_model_type,
                 "hidden_dim": self.hidden_dim,
-                "dropout": self.dropout
+                "dropout": self.dropout,
+                "output_dim": self.output_dim
             },
             "clip.linear1": self.clip.linear1.state_dict(),
             "classifier": self.classifier.state_dict(),

@@ -30,7 +30,8 @@ def load_model_from_path(path, file_name=None, device="cpu"):
     model_args = checkpoint["model_args"]
 
     # Initialize the model using the saved arguments
-    model = model_class(**model_args)
+    # TODO CHANGE THIS
+    model = model_class(**model_args, output_dim=1)
 
     # Load state dicts into submodules
     model.clip.linear1.load_state_dict(checkpoint["clip.linear1"])
