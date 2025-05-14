@@ -86,6 +86,8 @@ def attention_rollout(model, text, image):
 
     for ten in complete_attn_image:
         print("Shape of attention tensor:", ten.shape)
+
+    print("\n")
     
     
     # Perform attention rollout
@@ -97,12 +99,16 @@ def attention_rollout(model, text, image):
         mean_attn /= mean_attn.sum(dim=-1, keepdim=True)
         print("Shape of mean attention:", mean_attn.shape)
         print("Shape of rollout:", rollout.shape)
-        id_mat = torch.eye(dim_image_mat).unsqueeze(0).to(mean_attn.device)
+        id_mat = torch.eye(mean_attn.shape[1]).to(mean_attn.device)
         if mean_attn.shape[1] == mean_attn.shape[2]:
-            mean_attn = mean_attn + id_mat
+            mean_attn = mean_attn + id_mat.unsqueeze(0)
         else:
-            extra_zeros = torch.zeros(mean_attn.shape[0], mean_attn.shape[1], dim_text_mat).to(mean_attn.device)
-            mean_attn = mean_attn + torch.cat((torch.eye(dim_image_mat).unsqueeze(0), extra_zeros), dim=-1)
+            extra_zeros = torch.zeros(mean_attn.shape[1], dim_text_mat).to(mean_attn.device)
+            print("\n Shape of extra zeros:", extra_zeros.shape)
+            print("Shape of id_mat:", id_mat.shape)
+            id_rect = torch.cat((id_mat, extra_zeros), dim=-1)
+            print("Shape of id_rect:", id_rect.shape)
+            mean_attn = mean_attn + id_rect.unsqueeze(0)
         
         rollout = torch.matmul(rollout, mean_attn)
     print("Shape of rollout:", rollout.shape)
@@ -133,7 +139,8 @@ def attention_rollout(model, text, image):
 
 
 if __name__ == "__main__":
-    path = "DL_vs_HateSpeech\models\model_checkpoints\ModelV2_single_class"
+    # path = "DL_vs_HateSpeech\models\model_checkpoints\ModelV2_single_class"
+    path = "DL_vs_HateSpeech/models/model_checkpoints/ModelV2_single_class"
     
 
     plot_attention_rollout(path, device="cpu")
