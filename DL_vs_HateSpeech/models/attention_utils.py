@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import cv2
 import torch
+import torch.nn.functional as F
 
 from DL_vs_HateSpeech.models import load_model_from_path
 from DL_vs_HateSpeech.utils import read_yaml_file, get_label_str_list
@@ -8,7 +10,7 @@ from DL_vs_HateSpeech.loading_data.dataloader import DataLoader
 from torch.utils.data import DataLoader as TorchDataLoader
 from DL_vs_HateSpeech.training.training import collate_fn
 
-def plot_attention_rollout(path, self_attn=True, device="cpu"):
+def plot_attention_rollout(path, self_attn=True, blur=True, alpha=0.5, device="cpu"):
     """
     Plot the attention rollout for a given model and inputs.
 
@@ -36,7 +38,7 @@ def plot_attention_rollout(path, self_attn=True, device="cpu"):
     print("Label:", get_label_str_list(labels))
 
     # Perform attention rollout
-    attn_map, _ = attention_rollout(model, text, image, self_attn=self_attn)
+    attn_map, orig_size = attention_rollout(model, text, image, self_attn=self_attn)
 
     # Plot the image and the attention weights side by side
     plt.figure(figsize=(10, 5))
@@ -50,6 +52,9 @@ def plot_attention_rollout(path, self_attn=True, device="cpu"):
     plt.imshow(attn_map.cpu().detach().numpy(), cmap='viridis')
     plt.colorbar()
     plt.show()
+
+    # Overlay attention on image
+    overlay_attention_on_image(attn_map, image, orig_size, blur=blur, alpha=alpha)
 
 def attention_rollout(model, text, image, self_attn=True):
     """
@@ -154,10 +159,52 @@ def attention_rollout(model, text, image, self_attn=True):
 
     return attn_map, orig_size
 
+def overlay_attention_on_image(attn_map, image, orig_size, blur=True, alpha=0.5):
+    """
+    Upsample and overlay attention map onto the original image (PIL-based input).
+
+    Args:
+        attn_map (Tensor): Attention map (H_patches, W_patches).
+        image (list): List containing a single PIL.Image.
+        orig_size (tuple): Original (H, W) of the image.
+        blur (bool): Whether to apply Gaussian blur.
+        alpha (float): Overlay opacity.
+
+    Returns:
+        None. Displays image with overlay.
+    """
+    # Convert PIL image to numpy array
+    pil_img = image[0]
+    img_np = np.array(pil_img).astype(np.float32) / 255.0  # (H, W, 3)
+
+    # Resize attention to image size
+    attn_resized = F.interpolate(
+        attn_map.unsqueeze(0).unsqueeze(0), size=orig_size, mode='bilinear', align_corners=False
+    ).squeeze()
+
+    # Convert to numpy array and normalize attention map
+    attn_np = attn_resized.cpu().detach().numpy()
+    attn_norm = (attn_np - attn_np.min()) / (attn_np.max() - attn_np.min() + 1e-8)
+
+    # Optional Gaussian blur
+    if blur:
+        attn_blur = cv2.GaussianBlur((attn_norm * 255).astype(np.uint8), (11, 11), sigmaX=0)
+        attn_overlay = attn_blur.astype(np.float32) / 255.0
+    else:
+        attn_overlay = attn_norm
+
+    # Show image + heatmap
+    plt.figure(figsize=(10, 5))
+    plt.imshow(img_np)
+    plt.imshow(attn_overlay, cmap='viridis', alpha=alpha)
+    plt.axis('off')
+    plt.title("Attention Overlay")
+    plt.show()
+
 
 if __name__ == "__main__":
     path = "DL_vs_HateSpeech/models/model_checkpoints/ModelV2_single_class"
     
     # Call plot attention rollout function
-    plot_attention_rollout(path, self_attn=True, device="cpu")
+    plot_attention_rollout(path, self_attn=True, blur=False, alpha=0.5, device="cpu")
     print("Attention rollout complete.")
