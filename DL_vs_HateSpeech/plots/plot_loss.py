@@ -24,7 +24,7 @@ def plot_metrics_from_path(path, save_path=None, title="Training and Validation 
         save_path (str, optional): If provided, saves the plot to this path.
     """
     accuracy = torch.load(os.path.join(path, "accuracies.pt"))
-    f1 = torch.load(os.path.join(path, "f1_scores.pt"))
+    f1 = torch.load(os.path.join(path, "f1_scores.pt"), weights_only=False)
     
     plot_metrics(accuracy , f1, save_path,title=title)
 
@@ -38,6 +38,7 @@ def plot_metrics(accuracy, f1, save_path=None, title="Training and Validation Me
         save_path (str, optional): If provided, saves the plot to this path.
     """
     plt.figure(figsize=(8, 6))
+    print(len(f1))
     plt.plot(accuracy, label='Accuracy', marker='o')
     plt.plot(f1, label='F1', marker='o')
     plt.xlabel('Epoch')
