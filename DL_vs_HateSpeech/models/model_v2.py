@@ -130,3 +130,12 @@ class ModelV2(nn.Module, BaseModel):
             "clip_image": clip_image_attn,
             "classifier": classifier_attn
         }
+    
+    def get_tokenizer(self):
+        """
+        Get the tokenizer from the CLIP model.
+        
+        Returns:
+            tokenizer: The tokenizer from the CLIP model.
+        """
+        return self.clip.processor.tokenizer.tokenize
