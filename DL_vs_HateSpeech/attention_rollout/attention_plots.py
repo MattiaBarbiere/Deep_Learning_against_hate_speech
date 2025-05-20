@@ -30,6 +30,10 @@ def plot_attention_rollout(path, self_attn=True, blur=True,
     # Load model from path
     model = load_model_from_path(path, file_name="model_epoch_20.pth", device=device)
 
+    # Model type
+    model_type = path[-2:]
+    print("Model type:", model_type)
+
     # Get config dict from path
     config_dict = read_yaml_file(path)
     print(config_dict)
@@ -74,7 +78,7 @@ def plot_attention_rollout(path, self_attn=True, blur=True,
     plt.colorbar()
     if save_fig:
         if index is not None:
-            plt.savefig(f"saved_images/image_and_weights_{index}.png", bbox_inches='tight', dpi=300)
+            plt.savefig(f"saved_images/image_and_weights_{index}_{model_type}.png", bbox_inches='tight', dpi=300)
         else:
             plt.savefig("saved_images/image_and_weights.png", bbox_inches='tight', dpi=300)
     if show_fig:
@@ -82,17 +86,17 @@ def plot_attention_rollout(path, self_attn=True, blur=True,
 
     # Overlay attention on image
     overlay_attention_on_image(attn_map, image, orig_size, blur=blur, alpha=alpha_image, 
-                               show_fig=show_fig, save_fig=save_fig, index=index)
+                               show_fig=show_fig, save_fig=save_fig, index=index, model_type=model_type)
 
     # Perform text attention rollout
     attn_weights, tokens = attention_rollout_text(model, text, image)
 
     # Plot text attention
-    plot_text_attention(attn_weights, tokens, show_fig=show_fig, save_fig=save_fig, index=index)
-    overlay_attention_on_text(attn_weights, tokens, show_fig=show_fig, save_fig=save_fig, index=index)
+    plot_text_attention(attn_weights, tokens, show_fig=show_fig, save_fig=save_fig, index=index, model_type=model_type)
+    overlay_attention_on_text(attn_weights, tokens, show_fig=show_fig, save_fig=save_fig, index=index, model_type=model_type)
 
 
-def overlay_attention_on_image(attn_map, image, orig_size, blur=True, alpha=0.5, 
+def overlay_attention_on_image(attn_map, image, orig_size, model_type, blur=True, alpha=0.5, 
                                show_fig=False, save_fig=False, index=None):
     """
     Upsample and overlay attention map onto the original image (PIL-based input).
@@ -100,6 +104,7 @@ def overlay_attention_on_image(attn_map, image, orig_size, blur=True, alpha=0.5,
     Args:
         attn_map (Tensor): Attention map (H_patches, W_patches).
         image (list): List containing a single PIL.Image.
+        model_type (str): Type of model used. 
         orig_size (tuple): Original (H, W) of the image.
         blur (bool): Whether to apply Gaussian blur.
         alpha (float): Overlay opacity.
@@ -142,19 +147,20 @@ def overlay_attention_on_image(attn_map, image, orig_size, blur=True, alpha=0.5,
     plt.axis('off')
     if save_fig:
         if index is not None:
-            plt.savefig(f"saved_images/image_attention_overlay_{index}.png", bbox_inches='tight', dpi=300)
+            plt.savefig(f"saved_images/image_attention_overlay_{index}_{model_type}.png", bbox_inches='tight', dpi=300)
         else:
             plt.savefig("saved_images/image_attention_overlay.png", bbox_inches='tight', dpi=300)
     if show_fig:
         plt.show()
 
-def plot_text_attention(weights, tokens, save_fig=False, show_fig=False, index=None):
+def plot_text_attention(weights, tokens, model_type, save_fig=False, show_fig=False, index=None):
     """
     Plot the attention weights for each token.
     
     Args:
         weights (Tensor): Attention weights for each token.
         tokens (list): List of tokens corresponding to the weights.
+        model_type (str): Type of model used.
         save_fig (bool): Whether to save the figure. Default is False.
         show_fig (bool): Whether to display the figure. Default is False.
         index (int): Index of the sample to visualize. If None, a random sample is selected.
@@ -167,19 +173,23 @@ def plot_text_attention(weights, tokens, save_fig=False, show_fig=False, index=N
 
     if save_fig:
         if index is not None:
-            plt.savefig(f"saved_images/text_attention_{index}.png", bbox_inches='tight', dpi=300)
+            plt.savefig(f"saved_images/text_attention_{index}_{model_type}.png", bbox_inches='tight', dpi=300)
         else:
             plt.savefig("saved_images/text_attention.png", bbox_inches='tight', dpi=300)
     if show_fig:
         plt.show()
 
-def overlay_attention_on_text(weights, tokens, show_fig=False, save_fig=False, index=None):
+# A dictionary that returns the vertical spacing of the text given the number of lines
+vertical_spacing_dict = {2: 1, 3: 0.65, 4: 0.5, 5: 0.4, 6: 0.3, 7: 0.3, 8: 0.25, 9: 0.2, 10: 0.2}
+
+def overlay_attention_on_text(weights, tokens, model_type, show_fig=False, save_fig=False, index=None):
     """
     Overlay attention weights on text tokens.
 
     Args:
         weights (Tensor): Attention weights for each token.
         tokens (list): List of tokens corresponding to the weights.
+        model_type (str): Type of model used.
         alpha (float): Overlay opacity.
         show_fig (bool): Whether to display the figure. Default is False.
         save_fig (bool): Whether to save the figure. Default is False.
@@ -193,12 +203,12 @@ def overlay_attention_on_text(weights, tokens, show_fig=False, save_fig=False, i
 
     # Create a figure and get the renderer
     number_of_lines = len(tokens) // 10 + 1
-    fig, ax = plt.subplots(figsize=(2.5, 0.3 * number_of_lines))
+    fig, ax = plt.subplots(figsize=(2.5, 0.2 * number_of_lines), )
     renderer = fig.canvas.get_renderer()
 
     # Variables to keep track of the length of the previous tokens and the line counter
-    length_of_prev_tokens = 0
-    line_counter = 0
+    horrizontal_pos = 0
+    vertical_pos = 0
 
     # Iterate through the tokens and their corresponding attention weights
     for i, token in enumerate(tokens):
@@ -210,14 +220,15 @@ def overlay_attention_on_text(weights, tokens, show_fig=False, save_fig=False, i
         # If there are a lot of tokens, split them into lines
         if i % 10 == 0 and i != 0:
             # Move x to the start
-            length_of_prev_tokens = 0
+            horrizontal_pos = 0
 
             # Decrease the y postion
-            line_counter -= 0.2
-
+            # vertical_pos -= ax.transData.inverted().transform((1, fig.get_size_inches()[1] * fig.dpi))[1]
+            vertical_pos -= vertical_spacing_dict[number_of_lines]
+            
         # Print the token with the box of color depending on the attention weight
         color = cmap(weights[i].item())
-        text_obj = ax.text(length_of_prev_tokens, line_counter, token, ha='left', va='center', fontsize=12,
+        text_obj = ax.text(horrizontal_pos, vertical_pos, token, ha='left', va='center', fontsize=12,
                            bbox=dict(facecolor=color, alpha=0.75))
         
         # Get the width of the rendered text in data coordinates
@@ -230,12 +241,13 @@ def overlay_attention_on_text(weights, tokens, show_fig=False, save_fig=False, i
         width_data = width_display * 0.5
 
         # Add the previous text box size plus a small margin
-        length_of_prev_tokens += width_data + 0.1
+        horrizontal_pos += width_data + 0.1
+
         
     plt.axis('off')
     if save_fig:
         if index is not None:
-            plt.savefig(f"saved_images/text_attention_overlay_{index}.png", bbox_inches='tight', dpi=300)
+            plt.savefig(f"saved_images/text_attention_overlay_{index}_{model_type}.png", bbox_inches='tight', dpi=300)
         else:
             plt.savefig("saved_images/text_attention_overlay.png", bbox_inches='tight', dpi=300)
     plt.savefig("saved_images/text_attention_overlay.png", bbox_inches='tight', dpi=300)
