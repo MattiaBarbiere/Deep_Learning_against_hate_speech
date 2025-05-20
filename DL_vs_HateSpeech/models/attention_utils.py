@@ -10,7 +10,7 @@ from DL_vs_HateSpeech.loading_data.dataloader import DataLoader
 from torch.utils.data import DataLoader as TorchDataLoader
 from DL_vs_HateSpeech.training.training import collate_fn
 
-def plot_attention_rollout(path, self_attn=True, blur=True, alpha=0.5, device="cpu"):
+def plot_attention_rollout(path, self_attn=True, blur=True, alpha=0.5, image_index = None, device="cpu"):
     """
     Plot the attention rollout for a given model and inputs.
 
@@ -28,10 +28,23 @@ def plot_attention_rollout(path, self_attn=True, blur=True, alpha=0.5, device="c
 
     # Create the train dataloader
     train_dataset = DataLoader(type="train", subset=config_dict["train"]["data_subset"])
-    train_loader = TorchDataLoader(train_dataset, batch_size=1, shuffle=True, collate_fn=collate_fn)
 
     # Get the first batch of training data
-    image, text, labels = next(iter(train_loader))
+    if image_index is None:
+        # Shuffle the TorchDataLoader to get a random sample
+        train_loader = TorchDataLoader(train_dataset, batch_size=1, shuffle=True, collate_fn=collate_fn)
+        
+        # If the index is not given, get the first batch
+        image, text, labels = next(iter(train_loader))
+    else:
+        # Dataloader with shuffle=False
+        train_loader = TorchDataLoader(train_dataset, batch_size=1, shuffle=False, collate_fn=collate_fn)
+        
+        # Get the sample from the dataset
+        sample = train_dataset[image_index]
+
+        # Collate it to match DataLoader output (expects a list of samples)
+        image, text, labels = collate_fn([sample])
 
     # Print shapes and labels
     print("\n Image shape:", image[0].size, "\n")
@@ -257,6 +270,11 @@ def overlay_attention_on_image(attn_map, image, orig_size, blur=True, alpha=0.5)
     pil_img = image[0]
     img_np = np.array(pil_img).astype(np.float32) / 255.0  # (H, W, 3)
 
+    # Convert to grayscale
+    if len(img_np.shape) == 3 and img_np.shape[2] == 3:
+        img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
+
+
     # Resize attention to image size
     attn_resized = F.interpolate(
         attn_map.unsqueeze(0).unsqueeze(0), size=orig_size, mode='bilinear', align_corners=False
@@ -276,9 +294,10 @@ def overlay_attention_on_image(attn_map, image, orig_size, blur=True, alpha=0.5)
     # Show image + heatmap
     plt.figure(figsize=(10, 5))
     plt.imshow(img_np)
-    plt.imshow(attn_overlay, cmap='viridis', alpha=alpha)
+    plt.imshow(attn_overlay, cmap='jet', alpha=alpha)
     plt.axis('off')
-    plt.title("Attention Overlay")
+    # plt.title("Attention Overlay")
+    plt.savefig("saved_images/attention_overlay.png", bbox_inches='tight', dpi=300)
     plt.show()
 
 def plot_text_attention(weights, tokens):
@@ -304,5 +323,5 @@ if __name__ == "__main__":
     path = "DL_vs_HateSpeech/models/model_checkpoints/ModelV2_single_class_clip_32"
     
     # Call plot attention rollout function
-    plot_attention_rollout(path, self_attn=True, blur=False, alpha=0.5, device="cpu")
+    plot_attention_rollout(path, self_attn=True, blur=False, alpha=0.5, image_index=813, device="cpu")
     print("Attention rollout complete.")
