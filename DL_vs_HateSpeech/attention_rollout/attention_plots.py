@@ -165,10 +165,22 @@ def plot_text_attention(weights, tokens, model_type, save_fig=False, show_fig=Fa
         show_fig (bool): Whether to display the figure. Default is False.
         index (int): Index of the sample to visualize. If None, a random sample is selected.
     """
-    plt.figure(figsize=(len(tokens) * 0.5, 2))
+    # Retrieve the minimum length of tokens and weights
     min_len = min(len(tokens), len(weights))
-    plt.bar(range(min_len), weights[:min_len].cpu().numpy())
-    plt.xticks(range(min_len), tokens[:min_len], rotation=90)
+    weights_np = weights[:min_len].cpu().numpy()
+    tokens_trimmed = tokens[:min_len]
+
+    # Set figure size based on number of tokens
+    plt.figure(figsize=(6, 0.4 * min_len))
+
+    # Plot horizontal bar chart
+    plt.barh(range(min_len), weights_np, align='center')
+
+    # Set token labels on the y-axis
+    plt.yticks(range(min_len), tokens_trimmed)
+    plt.gca().invert_yaxis()
+
+    plt.xlabel('Attention Weight')
     plt.tight_layout()
 
     if save_fig:
