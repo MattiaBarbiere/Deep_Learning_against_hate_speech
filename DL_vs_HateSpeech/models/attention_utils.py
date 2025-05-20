@@ -173,6 +173,9 @@ def attention_rollout_image(model, text, image, self_attn=True):
     dimension = np.sqrt(rollout.shape[1] - 1)
     attn_map = 1 - attn_flat.reshape(int(dimension), int(dimension))
 
+    # Min-max normalization
+    attn_map = (attn_map - attn_map.min()) / (attn_map.max() - attn_map.min() + 1e-8)
+
     # Extract original image dimensions
     orig_size = image[0].size[::-1] # (H, W)
 
@@ -250,7 +253,10 @@ def attention_rollout_text(model, text, image):
     # Convert input text into tokens (must match those used in model input)
     tokens = model.clip.processor.tokenizer.tokenize(text_input)
 
-    return final_attn, tokens
+    # Min-max normalize the attention weights
+    final_attn_norm = (final_attn - final_attn.min()) / (final_attn.max() - final_attn.min())
+
+    return final_attn_norm, tokens
 
 def overlay_attention_on_image(attn_map, image, orig_size, blur=True, alpha=0.5):
     """
@@ -312,8 +318,6 @@ def plot_text_attention(weights, tokens):
     min_len = min(len(tokens), len(weights))
     plt.bar(range(min_len), weights[:min_len].cpu().numpy())
     plt.xticks(range(min_len), tokens[:min_len], rotation=90)
-    # plt.bar(range(len(tokens)), weights.cpu().numpy())
-    # plt.xticks(range(len(tokens)), tokens, rotation=90)
     plt.title("Attention per Token")
     plt.tight_layout()
     plt.show()
