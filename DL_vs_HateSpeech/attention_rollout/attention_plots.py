@@ -62,6 +62,19 @@ def plot_attention_rollout(path, self_attn=True, blur=True,
     print("\n Image shape:", image[0].size, "\n")
     print("Label:", get_label_str_list(labels))
 
+    # Plot the image
+    plt.figure(figsize=(10, 5))
+    plt.imshow(image[0])
+    plt.axis('off')
+    plt.title("Original Image")
+    if save_fig:
+        if index is not None:
+            plt.savefig(f"saved_images/original_image_{index}.png", bbox_inches='tight', dpi=300)
+        else:
+            plt.savefig("saved_images/original_image.png", bbox_inches='tight', dpi=300)
+    if show_fig:
+        plt.show()
+
     # Perform attention rollout
     attn_map, orig_size = attention_rollout_image(model, text, image, self_attn=self_attn)
 
