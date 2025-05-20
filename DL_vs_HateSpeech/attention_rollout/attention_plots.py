@@ -74,7 +74,7 @@ def plot_attention_rollout(path, self_attn=True, blur=True,
     plt.subplot(1, 2, 2)
     plt.title("Attention Weights")
     plt.axis('off')
-    plt.imshow(attn_map.cpu().detach().numpy(), cmap='viridis')
+    plt.imshow(attn_map.cpu().detach().numpy(), cmap='jet')
     plt.colorbar()
     if save_fig:
         if index is not None:
