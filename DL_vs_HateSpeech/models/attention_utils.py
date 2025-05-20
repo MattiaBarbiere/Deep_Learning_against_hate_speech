@@ -57,10 +57,10 @@ def plot_attention_rollout(path, self_attn=True, blur=True, alpha=0.5, device="c
     overlay_attention_on_image(attn_map, image, orig_size, blur=blur, alpha=alpha)
 
     # Perform text attention rollout
-    # attn_weights, tokens = attention_rollout_text(model, text, image)
+    attn_weights, tokens = attention_rollout_text(model, text, image)
 
     # Plot text attention
-    # plot_text_attention(attn_weights, tokens)
+    plot_text_attention(attn_weights, tokens)
 
 def attention_rollout_image(model, text, image, self_attn=True):
     """
@@ -228,8 +228,14 @@ def attention_rollout_text(model, text, image):
     # Extract the attention weights for the text tokens (excluding CLS token at index 0)
     final_attn = rollout[0, 1:, 0]
 
+    # Convert list to string if necessary
+    if isinstance(text, list):
+        text_input = " ".join(text)
+    else:
+        text_input = text
+
     # Convert input text into tokens (must match those used in model input)
-    tokens = model.processor.tokenizer.tokenize(text)
+    tokens = model.clip.processor.tokenizer.tokenize(text_input)
 
     return final_attn, tokens
 
@@ -284,15 +290,18 @@ def plot_text_attention(weights, tokens):
         tokens (list): List of tokens corresponding to the weights.
     """
     plt.figure(figsize=(len(tokens) * 0.5, 2))
-    plt.bar(range(len(tokens)), weights.cpu().numpy())
-    plt.xticks(range(len(tokens)), tokens, rotation=90)
+    min_len = min(len(tokens), len(weights))
+    plt.bar(range(min_len), weights[:min_len].cpu().numpy())
+    plt.xticks(range(min_len), tokens[:min_len], rotation=90)
+    # plt.bar(range(len(tokens)), weights.cpu().numpy())
+    # plt.xticks(range(len(tokens)), tokens, rotation=90)
     plt.title("Attention per Token")
     plt.tight_layout()
     plt.show()
 
 
 if __name__ == "__main__":
-    path = "DL_vs_HateSpeech/models/model_checkpoints/ModelV2_single_class"
+    path = "DL_vs_HateSpeech/models/model_checkpoints/ModelV2_single_class_clip_32"
     
     # Call plot attention rollout function
     plot_attention_rollout(path, self_attn=True, blur=False, alpha=0.5, device="cpu")
