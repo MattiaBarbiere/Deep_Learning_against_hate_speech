@@ -3,6 +3,7 @@ from DL_vs_HateSpeech.attention_rollout.attention_plots import plot_attention_ro
 path = "DL_vs_HateSpeech/models/model_checkpoints/ModelV2_single_class_clip_16"
 
 indexes = [3, 4, 8, 10, 16, 17, 25, 27, 35, 38]
+indexes = [813]
 # Call plot attention rollout function
 
 for i in indexes:

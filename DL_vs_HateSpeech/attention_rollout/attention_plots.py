@@ -250,7 +250,6 @@ def overlay_attention_on_text(weights, tokens, model_type, show_fig=False, save_
             plt.savefig(f"saved_images/text_attention_overlay_{index}_{model_type}.png", bbox_inches='tight', dpi=300)
         else:
             plt.savefig("saved_images/text_attention_overlay.png", bbox_inches='tight', dpi=300)
-    plt.savefig("saved_images/text_attention_overlay.png", bbox_inches='tight', dpi=300)
 
     if show_fig:
         plt.show()
