@@ -49,7 +49,7 @@ class DataLoader(Dataset):
 
     def __len__(self):
         # return len(self.json)
-        return 1000
+        return 32
 
     def __getitem__(self, idx):
         """

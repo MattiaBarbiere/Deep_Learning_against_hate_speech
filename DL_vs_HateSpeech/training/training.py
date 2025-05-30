@@ -64,6 +64,7 @@ def train_epoch(model, dataloader, optimizer, criterion, device, augmentation=Tr
 
         # Model forward pass
         probs = model(texts, images)
+        print(probs)
 
         # Compute loss
         loss = criterion(probs.squeeze(1), labels)

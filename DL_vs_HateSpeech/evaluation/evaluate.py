@@ -13,11 +13,16 @@ def evaluate(model, dataloader, criterion, device):
             labels = labels.to(device)
 
             # Forward pass
-            probs = model.predict(texts, images)
+            logits = model(texts, images)
 
             # Compute loss
-            loss = criterion(probs.squeeze(1), labels)
+            loss = criterion(logits.squeeze(1), labels)
             total_loss += loss.item()
+
+            # Evaluate the model
+            probs = torch.sigmoid(logits)
+            probs = probs.squeeze(1)
+            
 
             # Compute predictions (get the class with the highest probability)
             # preds = torch.argmax(probs, dim=1)

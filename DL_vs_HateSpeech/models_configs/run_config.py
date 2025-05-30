@@ -68,7 +68,7 @@ def main(cfg: DictConfig):
         train_losses.append(train_loss)
 
         # Evaluation loss and accuracy
-        val_loss, accuracy, f1 = evaluate(model, val_loader, criterion, device)
+        val_loss, accuracy, f1 = evaluate(model, train_loader, criterion, device)
         print(f"Val Loss: {val_loss:.4f}")
         print(f"Val Accuracy: {accuracy * 100:.2f}%")
         val_losses.append(val_loss)

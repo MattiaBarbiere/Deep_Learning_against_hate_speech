@@ -4,16 +4,13 @@ defaults:
 
 hydra:
   run:
-    dir: ./DL_vs_HateSpeech/models/model_checkpoints/${model.type}_clip_${model.model_kwargs.clip_model_type}_aug_${train.augmentation}
+    dir: ./DL_vs_HateSpeech/models/model_checkpoints/testing
   sweep:
     dir: ./DL_vs_HateSpeech/models/model_checkpoints
-    subdir: ${model.type}_single_class_clip_${model.model_kwargs.clip_model_type}
+    subdir: ${model.type}_single_class_clip_${model.model_kwargs.clip_model_type}_testing
   sweeper:
     params:
-      model.model_kwargs.clip_model_type: "32, 16"
-      model.model_kwargs.hidden_dim: 512
-      model.model_kwargs.dropout: 0.25
-      train.augmentation: True
+      model.model_kwargs.clip_model_type: "32"
       
   
   job:
@@ -57,10 +54,10 @@ model:
     output_dim: 1
 
 train:
-  batch_size: 32 
+  batch_size: 32
   epochs: 20
   optimizer: "Adam"
-  lr: 1e-5
-  augmentation: True
+  lr: 1e-4
+  augmentation: False
   weight_decay: 0.01
   data_subset: "us_pol"
