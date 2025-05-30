@@ -24,6 +24,7 @@ def main(cfg: DictConfig):
 
     # Device setup
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")
     print(f"Using device: {device}")
     cfg_dict = OmegaConf.to_container(cfg, resolve=True)
     print(cfg_dict)

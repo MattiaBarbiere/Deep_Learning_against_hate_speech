@@ -48,7 +48,8 @@ class DataLoader(Dataset):
         return img  # Already RGB
 
     def __len__(self):
-        return len(self.json)
+        # return len(self.json)
+        return 1000
 
     def __getitem__(self, idx):
         """

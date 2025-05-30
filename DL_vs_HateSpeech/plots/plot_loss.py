@@ -25,6 +25,9 @@ def plot_metrics_from_path(path, save_path=None, title="Training and Validation 
     """
     accuracy = torch.load(os.path.join(path, "accuracies.pt"))
     f1 = torch.load(os.path.join(path, "f1_scores.pt"), weights_only=False)
+
+    print(accuracy)
+    print(f1)
     
     plot_metrics(accuracy , f1, save_path,title=title)
 
