@@ -1,3 +1,9 @@
+"""
+model_v2.py
+
+Defines ModelV2, a multimodal model using AttentionCLIP and an attention classifier.
+"""
+
 import torch
 import torch.nn as nn
 import os
@@ -6,7 +12,17 @@ from DL_vs_HateSpeech.CLIP import AttentionCLIP
 from DL_vs_HateSpeech.transformer_models.attention_transformer import AttentionClassifier
 
 class ModelV2(nn.Module, BaseModel):
+    """
+    ModelV2: Uses AttentionCLIP and an attention-based classifier.
+    """
     def __init__(self, clip_model_type="32", hidden_dim=256, dropout=0.1, output_dim=3):
+        """
+        Args:
+            clip_model_type (str): Type of CLIP model ("32" or "16").
+            hidden_dim (int): Hidden dimension for the classifier.
+            dropout (float): Dropout rate for the classifier.
+            output_dim (int): Output dimension (number of classes).
+        """
         nn.Module.__init__(self)
         BaseModel.__init__(self)
         # Save the args
@@ -32,9 +48,15 @@ class ModelV2(nn.Module, BaseModel):
 
     def forward(self, text, images, attention_mask=None):
         """
-        text: List[str] or tensor (batch_size,)
-        images: List[PIL.Image] or tensor (batch_size, channels, H, W)
-        attention_mask: Optional tensor (batch_size, seq_len) for text padding
+        Forward pass for the model.
+
+        Args:
+            text: List[str] or tensor (batch_size,)
+            images: List[PIL.Image] or tensor (batch_size, channels, H, W)
+            attention_mask: Optional tensor (batch_size, seq_len) for text padding
+
+        Returns:
+            logits: Output of the classifier.
         """
         # Make sure we are in training mode
         self.train()
@@ -49,8 +71,14 @@ class ModelV2(nn.Module, BaseModel):
     
     def predict(self, text, images):
         """
-        text: List[str] or tensor (batch_size,)
-        images: List[PIL.Image] or tensor (batch_size, channels, H, W)
+        Predict probabilities for the given inputs.
+
+        Args:
+            text: List[str] or tensor (batch_size,)
+            images: List[PIL.Image] or tensor (batch_size, channels, H, W)
+
+        Returns:
+            torch.Tensor: Softmax or sigmoid probabilities.
         """
         # Make sure we are in evaluation mode
         self.eval()
@@ -61,14 +89,13 @@ class ModelV2(nn.Module, BaseModel):
         # Classification
         logits = self.classifier(joint_embeddings)
         
-        # Return softmax probabilities
+        # Return softmax or sigmoid probabilities depending on output_dim
         if self.output_dim == 3:
             return torch.softmax(logits, dim=-1)
         elif self.output_dim == 1:
             return torch.sigmoid(logits)
         else:
             raise ValueError(f"Unknown output dimension: {self.output_dim}. Must be 1 or 3.")
-
 
     def save(self, path=None, file_name=None):
         """

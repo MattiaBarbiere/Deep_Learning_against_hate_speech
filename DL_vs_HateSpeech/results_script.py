@@ -1,3 +1,9 @@
+"""
+results_script.py
+
+Script for training and evaluating a model, saving checkpoints and loss curves.
+"""
+
 import torch
 from torch.utils.data import DataLoader as TorchDataLoader
 
@@ -48,23 +54,22 @@ check_frozen_params(model, print_layers=False)
 for epoch in range(EPOCHS):
     print(f"\nEpoch {epoch + 1}/{EPOCHS}")
 
-    # Train
+    # Train for one epoch
     train_loss = train_epoch(model, train_loader, optimizer, criterion, device, augmentation=AUGMENTATION)
     print(f"Train Loss: {train_loss:.4f}")
     train_losses.append(train_loss)
 
-    # Evaluation loss and accuracy
+    # Evaluate on validation set
     val_loss, val_accuracy = evaluate(model, val_loader, criterion, device)
     print(f"Val Loss: {val_loss:.4f}")
     print(f"Val Accuracy: {val_accuracy * 100:.2f}%")
     val_losses.append(val_loss)
 
-
+# Save model and loss curves
 model_save_path = "./DL_vs_HateSpeech/models/model_checkpoints/model_1_with_augmentation/"
 model.save(model_save_path)
 torch.save(val_losses, model_save_path + "val_loss.pt")
 torch.save(train_losses, model_save_path + "train_loss.pt")
 
-
-# Plot at the end
+# Plot at the end (uncomment to save plot)
 # plot_losses(train_losses, val_losses, save_path="loss_plot.png")

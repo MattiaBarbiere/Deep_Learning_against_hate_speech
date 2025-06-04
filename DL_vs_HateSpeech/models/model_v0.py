@@ -1,3 +1,9 @@
+"""
+model_v0.py
+
+Defines ModelV0, a baseline multimodal model using CLIP and a transformer classifier.
+"""
+
 import torch
 import torch.nn as nn
 import os
@@ -6,7 +12,16 @@ from DL_vs_HateSpeech.CLIP import FineTunedCLIP
 from DL_vs_HateSpeech.transformer_models.transformer import TransformerClassifier
 
 class ModelV0(nn.Module, BaseModel):
+    """
+    Baseline model using CLIP for feature extraction and a transformer classifier.
+    """
     def __init__(self, clip_model_type="32", hidden_dim=256, dropout=0.1):
+        """
+        Args:
+            clip_model_type (str): Type of CLIP model ("32" or "16").
+            hidden_dim (int): Hidden dimension for the classifier.
+            dropout (float): Dropout rate for the classifier.
+        """
         nn.Module.__init__(self)
         BaseModel.__init__(self)
         # Save the args
@@ -30,9 +45,15 @@ class ModelV0(nn.Module, BaseModel):
 
     def forward(self, text, images, attention_mask=None):
         """
-        text: List[str] or tensor (batch_size,)
-        images: List[PIL.Image] or tensor (batch_size, channels, H, W)
-        attention_mask: Optional tensor (batch_size, seq_len) for text padding
+        Forward pass for the model.
+
+        Args:
+            text: List[str] or tensor (batch_size,)
+            images: List[PIL.Image] or tensor (batch_size, channels, H, W)
+            attention_mask: Optional tensor (batch_size, seq_len) for text padding
+
+        Returns:
+            logits: Output of the classifier.
         """
         # Make sure we are in training mode
         self.train()
@@ -46,8 +67,14 @@ class ModelV0(nn.Module, BaseModel):
     
     def predict(self, text, images):
         """
-        text: List[str] or tensor (batch_size,)
-        images: List[PIL.Image] or tensor (batch_size, channels, H, W)
+        Predict probabilities for the given inputs.
+
+        Args:
+            text: List[str] or tensor (batch_size,)
+            images: List[PIL.Image] or tensor (batch_size, channels, H, W)
+
+        Returns:
+            torch.Tensor: Softmax probabilities.
         """
         # Make sure we are in evaluation mode
         self.eval()
@@ -60,7 +87,6 @@ class ModelV0(nn.Module, BaseModel):
         
         # Return softmax probabilities
         return torch.softmax(logits, dim=-1)
-
 
     def save(self, path=None):
         """
@@ -89,4 +115,3 @@ class ModelV0(nn.Module, BaseModel):
         "clip.linear1": self.clip.linear1.state_dict(),
         "classifier": self.classifier.state_dict()
         }, os.path.join(path, "model.pth"))
-        
