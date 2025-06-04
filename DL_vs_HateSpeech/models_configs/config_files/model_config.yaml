@@ -10,10 +10,9 @@ hydra:
     subdir: ${model.type}_single_class_clip_${model.model_kwargs.clip_model_type}_testing_${train.augmentation}
   sweeper:
     params:
-      model.model_kwargs.clip_model_type: "32"
-      train.augmentation: True
-      
-  
+      model.model_kwargs.clip_model_type: "32, 16"
+      train.augmentation: True, False
+
   job:
     chdir: True
 
@@ -56,7 +55,7 @@ model:
 
 train:
   batch_size: 32
-  epochs: 100
+  epochs: 50
   optimizer: "Adam"
   lr: 1e-4
   augmentation: False

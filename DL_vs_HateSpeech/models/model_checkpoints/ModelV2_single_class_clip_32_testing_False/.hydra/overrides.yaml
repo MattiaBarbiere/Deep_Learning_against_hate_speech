@@ -1,0 +1,2 @@
+- model.model_kwargs.clip_model_type=32
+- train.augmentation=False
