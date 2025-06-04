@@ -63,8 +63,8 @@ def augment_batch(texts, images):
 
         # Augmented version
         aug_image = meme_augmentation(image)
-        if random.random() < 0.3:  # 30% chance of JPEG compression
-            aug_image = simulate_jpeg_artifacts(aug_image)
+        # if random.random() < 0.3:  # 30% chance of JPEG compression
+        #     aug_image = simulate_jpeg_artifacts(aug_image)
 
         new_texts.append(text)  # Same text
         new_images.append(aug_image)
