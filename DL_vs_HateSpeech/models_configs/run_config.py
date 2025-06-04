@@ -24,7 +24,7 @@ def main(cfg: DictConfig):
 
     # Device setup
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    device = torch.device("cpu")
+    # device = torch.device("cpu")
     print(f"Using device: {device}")
     cfg_dict = OmegaConf.to_container(cfg, resolve=True)
     print(cfg_dict)
@@ -41,7 +41,7 @@ def main(cfg: DictConfig):
 
     # Load Data
     train_dataset = DataLoader(type="train", subset=DATA_SUBSET)
-    val_dataset = DataLoader(type="val", subset=DATA_SUBSET)
+    val_dataset = DataLoader(type="test", subset=DATA_SUBSET)
 
     train_loader = TorchDataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_fn)
     val_loader = TorchDataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=collate_fn)
@@ -68,7 +68,7 @@ def main(cfg: DictConfig):
         train_losses.append(train_loss)
 
         # Evaluation loss and accuracy
-        val_loss, accuracy, f1 = evaluate(model, train_loader, criterion, device)
+        val_loss, accuracy, f1 = evaluate(model, val_loader, criterion, device)
         print(f"Val Loss: {val_loss:.4f}")
         print(f"Val Accuracy: {accuracy * 100:.2f}%")
         val_losses.append(val_loss)
@@ -76,14 +76,12 @@ def main(cfg: DictConfig):
         f1_scores.append(f1)
 
         # Save the model every 10 epochs
-        if (epoch + 1) % 10 == 0:
-            model.save(file_name=f"model_epoch_{epoch + 1}.pth")
-
-
-    torch.save(val_losses, "./val_loss.pt")
-    torch.save(train_losses, "./train_loss.pt")
-    torch.save(accuracies, "./accuracies.pt")
-    torch.save(f1_scores, "./f1_scores.pt")
+        if (epoch + 1) % 10 == 0 or accuracy > 0.6:
+            model.save(file_name=f"model_epoch_{epoch + 1}_ac_{accuracy}.pth")
+            torch.save(val_losses, "./val_loss.pt")
+            torch.save(train_losses, "./train_loss.pt")
+            torch.save(accuracies, "./accuracies.pt")
+            torch.save(f1_scores, "./f1_scores.pt")
 
 
     # Plot at the end
