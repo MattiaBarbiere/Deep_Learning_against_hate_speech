@@ -134,7 +134,7 @@ def overlay_attention_on_image(attn_map, image, orig_size, model_type, blur=True
 
     # Convert to grayscale
     if len(img_np.shape) == 3 and img_np.shape[2] == 3:
-        img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
+        img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY) * 0.5
 
 
     # Resize attention to image size
