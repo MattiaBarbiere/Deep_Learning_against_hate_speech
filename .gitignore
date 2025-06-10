@@ -179,9 +179,9 @@ images
 splits
 HarMeme_Images
 
-# Cluster files
 *slurm*
 .submitit
+run_gpu.job
 
 
 extra*
