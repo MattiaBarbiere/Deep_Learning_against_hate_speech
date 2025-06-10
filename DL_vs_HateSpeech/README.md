@@ -1,6 +1,7 @@
 # DL_vs_HateSpeech
 
-This folder contains the main codebase for the Deep Learning Against Hate Speech project. Below is an overview of the folder structure and the main functions/classes in each file.
+This folder contains the main codebase for the Deep Learning Against Hate Speech project. Below is an overview of the folder structure and the main functions/classes in each file. The memes dataset can be downloaded from: [Harmful Memes Dataset](https://drive.google.com/file/d/1aMvOHACrG5SgMl4tm9BP1VTiqv8zFn9b/view). The annotations, already included in the present repository, are located in [Harmful Memes Annotations](https://github.com/LCS2-IIITD/MOMENTA/tree/main) and specifically in `HarMeme_V1/Annotations/Harm-P`.
+
 
 ---
 
