@@ -18,7 +18,7 @@ def load_model_from_path(path, file_name=None, device="cpu"):
         path (str): The path where the folder where model was saved.
         file_name (str): The name of the file to load. If None, it will use the default file name.
         device (str): Device to load the model on.
-
+ 
     Returns:
         An instance of the model with loaded weights.
     """

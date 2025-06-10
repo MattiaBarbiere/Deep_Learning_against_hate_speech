@@ -157,7 +157,7 @@ def read_yaml_file(path):
     """
     # Get the absolute path
     path = os.path.abspath(path)
-    with open(os.path.join(path, ".hydra", "config.yaml"), 'r') as stream:
+    with open(os.path.join(path, "config.yaml"), 'r') as stream:
         try:
             params = yaml.safe_load(stream)
         except yaml.YAMLError as exc:

@@ -10,15 +10,16 @@ from torch.utils.data import DataLoader as TorchDataLoader
 from DL_vs_HateSpeech.training.training import collate_fn
 from DL_vs_HateSpeech.attention_rollout.attention_utils import attention_rollout_image, attention_rollout_text
 
-def plot_attention_rollout(path, self_attn=True, blur=True, 
+def plot_attention_rollout(path, file_name="model_1.pth", self_attn=True, blur=True, 
                            alpha_image=0.5, index = None, 
                            show_fig=False, save_fig=False,
                            device="cpu"):
     """
     Plot the attention rollout for a given model and inputs.
-
+ 
     Args:
         path (str): Path to the model checkpoint.
+        file_name (str): Name of the model file to load. Default is "model_1.pth".
         self_attn (bool): Whether to consider self-attention. Default is True.
         blur (bool): Whether to apply Gaussian blur to the attention map. Default is True.
         alpha_image (float): Overlay opacity for the attention map. Default is 0.5.
@@ -28,8 +29,8 @@ def plot_attention_rollout(path, self_attn=True, blur=True,
         device (str): Device to load the model on. Default is "cpu".
     """
     # Load model from path
-    model = load_model_from_path(path, file_name="model_epoch_20.pth", device=device)
-
+    model = load_model_from_path(path, file_name=file_name, device=device)
+ 
     # Model type
     model_type = path[-2:]
     print("Model type:", model_type)
