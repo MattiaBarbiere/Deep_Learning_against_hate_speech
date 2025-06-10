@@ -1,13 +1,21 @@
+"""
+attention_clip.py
+
+Defines AttentionCLIP, a wrapper around the HuggingFace CLIP model with attention extraction.
+"""
+
 import torch
 import torch.nn as nn
 from transformers import CLIPProcessor, CLIPModel
 
 class AttentionCLIP(nn.Module):
+    """
+    Wrapper for HuggingFace CLIP model with attention extraction and projection.
+    """
     def __init__(self, model_type = "32"):
         """
-        Parameters
-        model_type: str or int
-            Type of CLIP model to use. Can be "32" for ViT-B/32 or "16" for ViT-B/16.
+        Args:
+            model_type (str or int): Type of CLIP model to use. Can be "32" for ViT-B/32 or "16" for ViT-B/16.
         """ 
         super().__init__()
 
@@ -36,6 +44,16 @@ class AttentionCLIP(nn.Module):
         self.image_attentions = None
 
     def forward(self, text, images):
+        """
+        Forward pass through CLIP and extract hidden states and attentions.
+
+        Args:
+            text: List[str] or tensor (batch_size,)
+            images: List[PIL.Image] or tensor (batch_size, channels, H, W)
+
+        Returns:
+            torch.Tensor: Concatenated image and text hidden states.
+        """
         inputs = self.processor(text=text, images=images, return_tensors="pt", padding=True, truncation=True)
 
         # Move inputs to the same device as the model
@@ -54,8 +72,14 @@ class AttentionCLIP(nn.Module):
         return torch.cat([image_hidden_states, text_hidden_states], dim=1)
 
     def get_attention_weights(self):
+        """
+        Returns the text and image attention weights.
+        """
         return self.text_attentions, self.image_attentions
 
     def set_attention_weights(self, text_attentions, image_attentions):
+        """
+        Set the attention weights.
+        """
         self.text_attentions = text_attentions
         self.image_attentions = image_attentions

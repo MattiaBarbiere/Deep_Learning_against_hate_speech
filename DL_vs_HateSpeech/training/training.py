@@ -37,7 +37,7 @@ def get_optimizer_and_criterion(model, lr=1e-5, weight_decay=0.01):
     Returns an AdamW optimizer and a cross-entropy loss function.
     """
     optimizer = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-    criterion = CustomBCELoss()
+    criterion = nn.BCEWithLogitsLoss()
     return optimizer, criterion
 
 
@@ -64,6 +64,7 @@ def train_epoch(model, dataloader, optimizer, criterion, device, augmentation=Tr
 
         # Model forward pass
         probs = model(texts, images)
+        # print(probs)
 
         # Compute loss
         loss = criterion(probs.squeeze(1), labels)

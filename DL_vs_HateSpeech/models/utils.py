@@ -1,3 +1,9 @@
+"""
+utils.py
+
+Model utility functions for loading models from checkpoints.
+"""
+
 import torch
 import os
 from DL_vs_HateSpeech.models import *
@@ -11,6 +17,7 @@ def load_model_from_path(path, file_name=None, device="cpu"):
     Args:
         path (str): The path where the folder where model was saved.
         file_name (str): The name of the file to load. If None, it will use the default file name.
+        device (str): Device to load the model on.
 
     Returns:
         An instance of the model with loaded weights.
@@ -30,8 +37,6 @@ def load_model_from_path(path, file_name=None, device="cpu"):
     model_args = checkpoint["model_args"]
 
     # Initialize the model using the saved arguments
-    # TODO CHANGE THIS
-    # model = model_class(**model_args, output_dim=1)
     model = model_class(**model_args)
 
     # Load state dicts into submodules

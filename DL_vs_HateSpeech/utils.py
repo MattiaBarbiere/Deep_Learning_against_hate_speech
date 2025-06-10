@@ -1,3 +1,9 @@
+"""
+utils.py
+
+Utility functions for label conversion, data loading, parameter checking, and configuration management.
+"""
+
 from DL_vs_HateSpeech.env_constants import PATH_TO_JSON_US_POL, PATH_TO_JSON_COVID_19
 import pandas as pd
 import json
@@ -19,7 +25,7 @@ NUM_TO_LABEL = {
 
 def get_label_num(label):
     """
-    Convert a label to its corresponding numerical value.
+    Convert a label string to its corresponding numerical value.
 
     Args:
         label (str): The label to convert.
@@ -34,7 +40,7 @@ def get_label_num(label):
     
 def get_label_num_list(label_list):
     """
-    Convert a list of labels to their corresponding numerical values.
+    Convert a list of label strings to their corresponding numerical values.
 
     Args:
         label_list (list): The list of labels to convert.
@@ -49,7 +55,7 @@ def get_label_str(label_num):
     Convert a numerical label to its corresponding string value.
 
     Args:
-        label_num (int): The numerical label to convert.
+        label_num (int or torch.Tensor): The numerical label to convert.
 
     Returns:
         str: The string value of the label.
@@ -70,31 +76,6 @@ def get_label_str_list(label_num_list):
     """
     return [get_label_str(label_num) for label_num in label_num_list]
 
-# # A function that given an image name, find the text and label of that image
-# def find_text_and_label(image_name):
-#     """
-#     Given an image name, find the text and label of that image in the dataframe.
-
-#     Args:
-#         image_name (str): The name of the image.
-
-#     Returns:
-#         tuple: A tuple containing the file, text and label of the image.
-#     """
-#     # Iterate over the files
-#     for file in PATH_TO_JSON_FILES.values():
-#         df = pd.read_csv(file)
-#         # Check if the first column matches the image name
-#         match = df[df.iloc[:, 0] == image_name]
-#         if not match.empty:
-#             # Get the values from second and third columns
-#             text = match.iloc[0, 1]
-#             label = match.iloc[0, 2]
-#             return file, text, label
-    
-#     # If no match is found, return error
-#     raise ValueError(f"Image name {image_name} not found in any CSV file.")
-
 def find_text_and_label_jsonl(image_name, type="train", subset="us_pol"):
     """
     Given an image name, find the text and labels of that image in the JSONL dataset.
@@ -109,6 +90,7 @@ def find_text_and_label_jsonl(image_name, type="train", subset="us_pol"):
     """
     paths = []
 
+    # Select the correct dataset paths based on the subset
     if subset == "us_pol":
         paths = [PATH_TO_JSON_US_POL[type]]
     elif subset == "covid_19":
@@ -118,6 +100,7 @@ def find_text_and_label_jsonl(image_name, type="train", subset="us_pol"):
     else:
         raise ValueError(f"Unknown subset: {subset}")
 
+    # Search for the image in the selected datasets
     for path in paths:
         df = load_json(path)
         match = df[df["image"] == image_name]
@@ -128,16 +111,15 @@ def find_text_and_label_jsonl(image_name, type="train", subset="us_pol"):
 
     raise ValueError(f"Image name {image_name} not found in any JSONL file.")
 
-
 def load_json(path):
     """
-    Load a JSON file and return its content.
+    Load a JSONL file and return its content as a pandas DataFrame.
 
     Args:
-        path (str): The path to the JSON file.
+        path (str): The path to the JSONL file.
 
     Returns:
-        dict: The content of the JSON file.
+        pd.DataFrame: The content of the JSONL file.
     """
     with open(path, 'r') as f:
         data = [json.loads(line) for line in f]
@@ -145,8 +127,8 @@ def load_json(path):
 
 def check_frozen_params(model, print_layers=False):
     """
-    Check which parameters of the model are frozen and which are trainable. If prints
-    the number of frozen and trainable parameters.
+    Check which parameters of the model are frozen and which are trainable.
+    Optionally print the names of the layers and their requires_grad status.
 
     Args:
         model (nn.Module): The model to check.
@@ -163,10 +145,15 @@ def check_frozen_params(model, print_layers=False):
             print(f"{name}: requires_grad = {param.requires_grad}")
     print(f"Trainable params: {trainable}, Frozen params: {frozen}")
 
-
 def read_yaml_file(path):
     """
-    Function that opens the yaml file and returns the parameters
+    Open the Hydra-generated YAML config file and return the parameters as a dictionary.
+
+    Args:
+        path (str): Path to the experiment folder containing .hydra/config.yaml
+
+    Returns:
+        dict: Parameters loaded from the YAML file.
     """
     # Get the absolute path
     path = os.path.abspath(path)
