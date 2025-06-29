@@ -93,10 +93,10 @@ For the full report of the project, including some theoretical background and ex
 ### Result examples
 As an example below you find Attention Rollout results on images and text when using model V2_16 for two memes. A more intense red colour indicates influential regions/tokens to the classification token. 
 <div style="overflow:auto; margin-bottom:3px; clear:both;">
-    <img src="./saved_images/image_attention_overlay_25_16.png" align="right" width=40%">
-    <img src="./saved_images/image_attention_overlay_813_16.png" align="left" width=40%">
-    <img src="./saved_images/text_attention_overlay_25_16.png" align="right" width=40%">
-    <img src="./saved_images/text_attention_overlay_813_16.png" align="left" width=40%">
+    <img src="./saved_images/image_attention_overlay_25_16.png" align="right" width=45%">
+    <img src="./saved_images/image_attention_overlay_813_16.png" align="left" width=45%">
+    <img src="./saved_images/text_attention_overlay_25_16.png" align="right" width=45%">
+    <img src="./saved_images/text_attention_overlay_813_16.png" align="left" width=45%">
 </div>
 
 <br>
