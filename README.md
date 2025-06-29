@@ -99,7 +99,7 @@ As an example below you find Attention Rollout results on images and text when u
     <img src="./saved_images/text_attention_overlay_813_16.png" align="left" width=47%">
 </div>
 
-<br>
+<div></div>
 
 Many other examples of Attention Rollout on both images and text are available in the [saved_images](./saved_images/) subfolder.
 
