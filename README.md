@@ -90,9 +90,18 @@ For more details, see [DL_vs_HateSpeech/README.md](./DL_vs_HateSpeech/README.md)
 
 For the full report of the project, including some theoretical background and experimental analysis, visit [CLIPping_at_hate_speech.pdf](./CLIPping_at_hate_speech.pdf).
 
-### Results
-![](./saved_images/image_attention_overlay_813_16.png)
-![](./saved_images/image_attention_overlay_25_16.png)
+### Result examples
+As an example below you find Attention Rollout results on images and text when using model $\texttt{V2\_16}$ for two memes. A more intense red colour indicates influential regions/tokens to the classification token. 
+<div style="overflow:auto; margin-bottom:3px; clear:both;">
+    <img src="./saved_images/image_attention_overlay_25_16.png" align="right" width="50%">
+    <img src="./saved_images/image_attention_overlay_813_16.png" align="left" width="50%">
+    <img src="./saved_images/text_attention_overlay_25_16.png" align="right" width="50%">
+    <img src="./saved_images/text_attention_overlay_813_16.png" align="left" width="50%">
+</div>
+
+<br>
+
+Many other examples of Attention Rollout on both images and text are available in the [saved_images](./saved_images/) subfolder.
 
 ---
 
