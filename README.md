@@ -45,6 +45,23 @@ The scirpt above should install all the requirements, if this is not the case yo
 
 Ensure you have Python 3.10+ and a virtual environment activated.
 
+
+Ensure you have Python 3.10+ and a virtual environment activated. Next clone the repository onto your local machine:
+
+```bash
+>>> git clone https://github.com/MattiaBarbiere/Deep_Learning_against_hate_speech.git
+```
+Once cloned, move to the folder containing `setup.py` and run the following command
+```bash
+>>> pip install -e .
+```
+You can remove the `-e` flag if you do not want to edit the `DL_vs_HateSpeech` module.
+
+The scirpt above should install all the requirements, if this is not the case run
+```bash
+>>> pip install -r requirements.txt
+```
+
 ---
 
 ## Folder Structure of DL_vs_HateSpeech
